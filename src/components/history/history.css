@@ -1,0 +1,35 @@
+.card2 {
+    background-color: #a1f3c9; /* Koyu arka plan rengi için */
+    color: white; /* Yazı rengi */
+    margin-bottom: 1rem; /* Kartların altındaki boşluk */
+    border-radius: 4px; /* Kenarları yuvarlat */
+  }
+  
+  .card-content2 {
+    padding: 16px; /* İçerik etrafındaki boşluk */
+  }
+  
+  .card-title2 {
+    font-size: 1.25rem; /* Başlık için yazı boyutu */
+    margin-bottom: 0.5rem; /* Başlık altındaki boşluk */
+  }
+  
+  .card-text2 {
+    margin-bottom: 0.25rem; /* Metin altındaki boşluk */
+  }
+  /* */
+  .select-button2 { 
+    background-color: #ff5722; /*Buton arka plan rengi */
+    color: white; /*Buton yazı rengi*/
+    padding: 8px 16px; /* Buton iç boşluğu */ 
+    border: none; /*Buton kenarlığını kaldır  */
+    border-radius: 4px; /*Buton kenarlarını yuvarlat  */
+    cursor: pointer; /*İmleç stilini pointer olarak ayarla */ 
+    display: inline-block; /* Butonu inline-block olarak ayarla */
+     margin-top: 1rem; /*Buton üstündeki boşluk  */
+     text-transform: uppercase; /*Buton metnini büyük harfe çevir  */ 
+   }
+  
+  .select-button2:hover {
+    background-color: #e64a19; /* Buton üzerine gelindiğinde arka plan rengi */
+  }

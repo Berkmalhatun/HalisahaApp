@@ -65,7 +65,7 @@ function LoginPage() {
   return (
     <div className="login-container">
       <div className="login-content">
-        <h1 className="login-title">Halısahala</h1>
+        <h1 className="login-title">Sahacup</h1>
         {/* Form submit edildiğinde handleSubmit fonksiyonunu çağır */}
         <form className="login-form" onSubmit={handleSubmit}>
           <div className="form-group">

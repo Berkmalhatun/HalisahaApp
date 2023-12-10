@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import {jwtDecode} from 'jwt-decode';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import logo from './logo.png'
 import './sidebar.css';
 
 const Sidebar = () => {
@@ -26,7 +27,7 @@ const Sidebar = () => {
   return (
     <div className="sidebar">
       <div className="sidebar-header">
-        <img src="/profile-image.jpg" alt="Profile" className="sidebar-profile-image" />
+        <img src={logo} alt="Profile" className="sidebar-profile-image" />
         <h3>{email}</h3>
         <p>{role}</p>
       </div>
