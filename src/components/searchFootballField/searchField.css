@@ -10,7 +10,29 @@
 
 .formControl {
   margin: 8px;
-  width: calc(50% - 16px); /* Her bir form elemanının genişliği */
+  background-color: rgba(255, 255, 255, 0.9); /* Opaklık eklendi */
+  border: 1px solid #ccc; /* Belirgin bir çerçeve eklendi */
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2); /* Hafif bir gölge eklendi */
+}
+
+/* Input label stilini güncelleme */
+.MuiInputLabel-root {
+  color: #000; /* Etiket rengini koyulaştır */
+}
+
+/* Select kontrolünün stilini güncelleme */
+.MuiSelect-select {
+  color: #000; /* Yazı rengini koyulaştır */
+}
+
+/* Select kontrolünün altındaki çizgiyi güncelleme */
+.MuiInput-underline:before {
+  border-bottom: 2px solid #ccc; /* Çizgiyi belirginleştir */
+}
+
+/* Tooltip yazı stilini güncelleme */
+.MuiTooltip-tooltip {
+  font-size: 1rem; /* Yazı boyutunu büyüt */
 }
 
 .search-box {

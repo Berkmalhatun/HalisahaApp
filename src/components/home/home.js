@@ -12,9 +12,11 @@ import RentalHistoryPage from '../history/history';
 
 const Home = () => {
     return (
-      <div className="app-container home-background">
-        <Sidebar /> {/* Sidebar bileşenini çağırıyoruz */}
-        <div className="content">
+      
+      <div className="app-container">
+      <div className="background-image-container"></div>
+          <Sidebar /> {/* Sidebar bileşenini çağırıyoruz */} 
+          <div className="content">
           <main>
             {/* Ana sayfa içeriği */}
             {/* Dinamik olarak gösterilecek bileşenler için Route'ları burada tanımlayın */}

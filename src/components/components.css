@@ -1,17 +1,24 @@
 /* App.css veya global bir stil dosyasında */
 
 .app-container {
-    display: flex;
-  }
-  .home-background {
-    /* background-image: url('./home/homebackround.webp'); Resmin yolu doğru olmalı */
-    background-color: darkgray;
-    background-size: cover; /* Arka planın kaplayacak şekilde ayarlanması */
-    background-position: center; /* Resmin ortalanması */
-    background-repeat: no-repeat; /* Resmin tekrar etmemesi */
-    height: 100%; /* Tüm görünür ekranı kaplaması */
-    
-  }
+  display: flex;
+  position: relative; /* Pozisyon ayarı eklendi */
+}
+
+.background-image-container {
+  background-image: url('./home/backround7.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100%; /* Tam ekran yüksekliği */
+  width: 100%; /* Tam ekran genişliği */
+  position: absolute; /* Pozisyon ayarı */
+  top: 0;
+  left: 0;
+  opacity: 1; /* Opaklık ayarı */
+  z-index: -1; /* İçerikten geride olması için */
+}
+
   
   .sidebar {
     /* Sidebar için gerekli stiller */

@@ -47,7 +47,9 @@ function RegisterPage() {
   return (
     <div className="register-container">
       <div className="register-content">
-        <div className="logo">Your Logo</div>
+        <header>
+           <div className="logo"></div>
+        </header>
         <h1>Kayıt</h1>
         <form className="register-form" onSubmit={handleSubmit}>
           <div className="form-group">
@@ -59,8 +61,8 @@ function RegisterPage() {
               placeholder="example@example.com"
             />
           </div>
-          <div className="form-row">
-            <div className="form-group half-width">
+         
+            <div className="form-group">
               <label>İsim</label>
               <input
                 type="text"
@@ -69,7 +71,7 @@ function RegisterPage() {
                 placeholder="İsim"
               />
             </div>
-            <div className="form-group half-width">
+            <div className="form-group ">
               <label>Soyisim</label>
               <input
                 type="text"
@@ -78,7 +80,7 @@ function RegisterPage() {
                 placeholder="Soyisim"
               />
             </div>
-          </div>
+        
           <div className="form-group">
             <label>Kullanıcı Tipi</label>
             <select
@@ -107,8 +109,8 @@ function RegisterPage() {
               placeholder="05XXXXXXXXX"
             />
           </div>
-          <div className="form-row">
-            <div className="form-group half-width">
+      
+            <div className="form-group">
               <label>Parola</label>
               <input
                 type="password"
@@ -117,7 +119,7 @@ function RegisterPage() {
                 placeholder="Parola"
               />
             </div>
-            <div className="form-group half-width">
+            <div className="form-group">
               <label>Parola Onayı</label>
               <input
                 type="password"
@@ -126,7 +128,7 @@ function RegisterPage() {
                 placeholder="Parola Onayı"
               />
             </div>
-          </div>
+        
           <button type="submit" className="register-button">
             Kayıt ol
           </button>

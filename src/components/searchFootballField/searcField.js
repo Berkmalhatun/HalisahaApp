@@ -1,8 +1,15 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Tooltip from "@mui/material/Tooltip";
 import "./searchField.css";
 
-import {Card, CardContent, Grid, Button, Paper, Typography } from "@mui/material";
+import {
+  Card,
+  CardContent,
+  Grid,
+  Button,
+  Paper,
+  Typography,
+} from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
@@ -10,11 +17,11 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import InputLabel from '@mui/material/InputLabel';
-import FormControl from '@mui/material/FormControl';
-import SearchIcon from '@mui/icons-material/Search';
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import InputLabel from "@mui/material/InputLabel";
+import FormControl from "@mui/material/FormControl";
+import SearchIcon from "@mui/icons-material/Search";
 import { jwtDecode } from "jwt-decode";
 //
 import "react-datepicker/dist/react-datepicker.css";
@@ -33,7 +40,7 @@ const initialHours = Array.from({ length: 24 }, (_, index) => ({
 //
 const RowCard = ({ row, onSelect }) => {
   return (
-    <Card variant="outlined" style={{ marginBottom: '1rem' }}>
+    <Card variant="outlined" style={{ marginBottom: "1rem" }}>
       <CardContent>
         <Typography variant="h5">{row.name}</Typography>
         <Typography color="textSecondary">{row.telephoneNumber}</Typography>
@@ -42,7 +49,7 @@ const RowCard = ({ row, onSelect }) => {
         <Button
           variant="contained"
           color="primary"
-          style={{ marginTop: '1rem' }}
+          style={{ marginTop: "1rem" }}
           onClick={() => onSelect(row.id)}
         >
           Seç
@@ -139,38 +146,36 @@ const SearchPage = () => {
   const [showErrorSnackbar, setShowErrorSnackbar] = useState(false);
 
   const [cities, setCities] = useState([]); // Tüm şehirler için
-const [districts, setDistricts] = useState([]); // Seçilen şehre ait ilçeler için
-const [selectedCity, setSelectedCity] = useState(""); // Seçilen şehir için
-const [selectedDistrict, setSelectedDistrict] = useState("");
+  const [districts, setDistricts] = useState([]); // Seçilen şehre ait ilçeler için
+  const [selectedCity, setSelectedCity] = useState(""); // Seçilen şehir için
+  const [selectedDistrict, setSelectedDistrict] = useState("");
 
-
-useEffect(() => {
-  fetch('http://localhost:4042/city/{cities}/city')
-    .then(response => response.json())
-    .then(data => {
-
-      setCities(data);
-    })
-    .catch(error => console.error('Error fetching cities:', error));
-}, []);
-useEffect(() => {
-  // Kullanıcı yeni bir şehir seçtiğinde çalışacak kod
-  if (selectedCity) {
-    // Seçilen şehire göre ilçeleri çeken API isteği
-    fetch(`http://localhost:4042/city/${selectedCity}/districts`)
-      .then(response => response.json())
-      .then(data => {
-        setDistricts(data); // API'den gelen ilçeleri setDistricts ile güncelle
+  useEffect(() => {
+    fetch("http://localhost:4042/city/{cities}/city")
+      .then((response) => response.json())
+      .then((data) => {
+        setCities(data);
       })
-      .catch(error => {
-        console.error('Error fetching districts:', error);
-        // Hata durumunda yapılacak işlemler
-      });
-  }
+      .catch((error) => console.error("Error fetching cities:", error));
+  }, []);
+  useEffect(() => {
+    // Kullanıcı yeni bir şehir seçtiğinde çalışacak kod
+    if (selectedCity) {
+      // Seçilen şehire göre ilçeleri çeken API isteği
+      fetch(`http://localhost:4042/city/${selectedCity}/districts`)
+        .then((response) => response.json())
+        .then((data) => {
+          setDistricts(data); // API'den gelen ilçeleri setDistricts ile güncelle
+        })
+        .catch((error) => {
+          console.error("Error fetching districts:", error);
+          // Hata durumunda yapılacak işlemler
+        });
+    }
 
-  // Her seferinde şehir değiştiğinde ilçe seçimini sıfırla
-  setSelectedDistrict("");
-}, [selectedCity]); // Bu useEffect, selectedCity değiştiğinde çalışır
+    // Her seferinde şehir değiştiğinde ilçe seçimini sıfırla
+    setSelectedDistrict("");
+  }, [selectedCity]); // Bu useEffect, selectedCity değiştiğinde çalışır
 
   const handleOpenDialog = () => {
     setOpenDialog(true);
@@ -220,7 +225,10 @@ useEffect(() => {
   );
   const handleSearch = async () => {
     // URLSearchParams ile şehir ve ilçe değerlerini URL'ye ekleyin
-    const queryParams = new URLSearchParams({ city: selectedCity, district: selectedDistrict }).toString();
+    const queryParams = new URLSearchParams({
+      city: selectedCity,
+      district: selectedDistrict,
+    }).toString();
     const url = `http://localhost:4042/football-field/football-field-city-district?${queryParams}`;
     try {
       const response = await fetch(url, {
@@ -229,7 +237,7 @@ useEffect(() => {
           "Content-Type": "application/json",
         },
       });
-  
+
       if (response.ok) {
         const jsonData = await response.json();
         setRows(jsonData);
@@ -347,9 +355,9 @@ useEffect(() => {
 
     const startDateUTC = new Date(
       Date.UTC(
-        selectedDateTime.getUTCFullYear(),
-        selectedDateTime.getUTCMonth(),
-        selectedDateTime.getUTCDate(),
+        selectedDateTime.getFullYear(),
+        selectedDateTime.getMonth(),
+        selectedDateTime.getDate(),
         parseInt(startHour, 10),
         0,
         0
@@ -358,9 +366,9 @@ useEffect(() => {
 
     const endDateUTC = new Date(
       Date.UTC(
-        selectedDateTime.getUTCFullYear(),
-        selectedDateTime.getUTCMonth(),
-        selectedDateTime.getUTCDate(),
+        selectedDateTime.getFullYear(),
+        selectedDateTime.getMonth(),
+        selectedDateTime.getDate(),
         parseInt(endHour, 10),
         0,
         0
@@ -424,61 +432,67 @@ useEffect(() => {
   };
   return (
     <div className="search-container">
-    <div className="search-box">
-    <FormControl variant="outlined" className="formControl">
-  <InputLabel htmlFor="city-select">Şehir</InputLabel>
-  <Select
-          labelId="city-select-label"
-          id="city-select"
-          value={selectedCity}
-          onChange={e => setSelectedCity(e.target.value)}
-          label="Şehir"
+      <div className="search-box">
+        <FormControl variant="outlined" className="formControl">
+          <InputLabel htmlFor="city-select">Şehir</InputLabel>
+          <Select
+            labelId="city-select-label"
+            id="city-select"
+            value={selectedCity}
+            onChange={(e) => setSelectedCity(e.target.value)}
+            label="Şehir"
+          >
+            <MenuItem value="">
+              <em>Şehir</em>
+            </MenuItem>
+            {cities.map((city) => (
+              <MenuItem key={city} value={city}>
+                {city}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        <FormControl variant="outlined" className="formControl">
+          <InputLabel htmlFor="district-select">İlçe</InputLabel>
+          <Select
+            labelId="district-select-label"
+            id="district-select"
+            value={selectedDistrict}
+            onChange={(e) => setSelectedDistrict(e.target.value)}
+            label="İlçe"
+          >
+            <MenuItem value="">
+              <em>İlçe</em>
+            </MenuItem>
+            {districts.map((district) => (
+              <MenuItem key={district} value={district}>
+                {district}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleSearch}
+          startIcon={<SearchIcon />}
         >
-          <MenuItem value="">
-            <em>Şehir</em>
-          </MenuItem>
-          {cities.map(city => (
-            <MenuItem key={city} value={city}>{city}</MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-
-      <FormControl variant="outlined" className="formControl">
-  <InputLabel htmlFor="district-select">İlçe</InputLabel>
-  <Select
-          labelId="district-select-label"
-          id="district-select"
-          value={selectedDistrict}
-          onChange={e => setSelectedDistrict(e.target.value)}
-          label="İlçe"
-        >
-          <MenuItem value="">
-            <em>İlçe</em>
-          </MenuItem>
-          {districts.map(district => (
-            <MenuItem key={district} value={district}>{district}</MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-
-      <Button
-  variant="contained"
-  color="primary"
-  onClick={handleSearch}
-  startIcon={<SearchIcon />}
->
-  Ara
-</Button>
-
-  </div>
-  {rows.map((row, index) => (
+          Ara
+        </Button>
+      </div>
+      {rows.map((row, index) => (
         <div className="card-container" key={index}>
           <div className="card-content">
             <div className="card-title">{row.name}</div>
             <div className="card-text">{row.telephoneNumber}</div>
             <div className="card-text">{row.address}</div>
             <div className="card-text">{row.price} TL</div>
-            <button className="select-button" onClick={() => handleSelectField(row.id)}>
+            <button
+              className="select-button"
+              onClick={() => handleSelectField(row.id)}
+            >
               Seç
             </button>
           </div>
@@ -495,7 +509,7 @@ useEffect(() => {
       >
         {/* // Dialogun maksimum genişliğini belirtir (xs, sm, md, lg, xl) */}
         <DialogTitle>Saha Kiralama</DialogTitle>
-        <DialogContent style={{ height: '22vh', overflowY: "unset" }}>
+        <DialogContent style={{ height: "22vh", overflowY: "unset" }}>
           <div style={{ marginBottom: "20px" }}>
             {" "}
             {/* Tarih seçimine alttan boşluk ekler */}
@@ -504,7 +518,11 @@ useEffect(() => {
           {renderTimeSlots()}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleRent} color="primary" startIcon={<ShoppingCartIcon/>}>
+          <Button
+            onClick={handleRent}
+            color="primary"
+            startIcon={<ShoppingCartIcon />}
+          >
             Kirala
           </Button>
           <Button onClick={handleCloseDialog} color="secondary">
