@@ -38,7 +38,6 @@ const Sidebar = () => {
           <>
             <Link to="/home/fields/add" className="sidebar-nav-item">Halı Saha Ekle</Link>
             <Link to="/home/fields/manage" className="sidebar-nav-item">Halı Sahalarım</Link>
-            <Link to="/home/fields/update" className="sidebar-nav-item">Bilgileri Güncelle</Link>
           </>
         ) : (
           // Kullanıcı için menü öğeleri
