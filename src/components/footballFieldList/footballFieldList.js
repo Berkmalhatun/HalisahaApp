@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
+import { Calendar, momentLocalizer } from 'react-big-calendar';
+import moment from 'moment';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
 import {
   Container,
   Grid,
@@ -15,15 +21,18 @@ import {
   Button,
 } from "@mui/material";
 import SportsSoccerIcon from "@mui/icons-material/SportsSoccer";
+import InfoIcon from '@mui/icons-material/Info';
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import image from "./indir.jpg";
 const FootballFieldsPage = () => {
   const [footballFields, setFootballFields] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const [editingField, setEditingField] = useState({});
-
-
-  
+  const [openInspectModal, setOpenInspectModal] = useState(false);
+  const [currentFieldId, setCurrentFieldId] = useState(null);
+  const [rentTimes, setRentTimes] = useState([]);
+  const localizer = momentLocalizer(moment);
   useEffect(() => {
     const fetchFootballFields = async () => {
       const token = localStorage.getItem("token");
@@ -31,7 +40,7 @@ const FootballFieldsPage = () => {
         const decoded = jwtDecode(token);
         try {
           const response = await axios.get(
-            "http://localhost:4042/football-field/get-footballfield",
+            `http://localhost:4042/football-field/get-footballfield?userid=${decoded.id}`,
             {
               params: { userid: decoded.userid },
             }
@@ -105,39 +114,126 @@ const FootballFieldsPage = () => {
     boxShadow: 24,
     p: 4,
   };
+  const handleInspectClick = async (fieldId) => {
+    setCurrentFieldId(fieldId);
+    try {
+      const response = await fetch(
+        `http://localhost:4042/rent-football-field/rent-football-field-hours-filter-filled?footballFieldId=${fieldId}`
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("API'den gelen veriler:", data);
+      setRentTimes(data);
+      setOpenInspectModal(true);
+    } catch (error) {
+      console.error("Doluluk bilgileri alınırken bir hata oluştu", error);
+    }
+  };
+  const convertUTCtoTurkeyTime = (utcDate) => {
+    const date = new Date(utcDate);
+    // Türkiye için UTC+3 saat ekleyelim
+    date.setUTCHours(date.getUTCHours() - 3);
+    return date;
+  };
+  console.log('rentTimes:', rentTimes);
+  const rentEvents = rentTimes.map((rentTime) => ({
+    title: 'Dolu',
+    start: convertUTCtoTurkeyTime(rentTime.startDate),
+    end: convertUTCtoTurkeyTime(rentTime.endDate),
+    allDay: false
+  }));
+  const CustomAgendaEvent = ({ event }) => (
+    <div>
+      <span>{event.title}</span>
+      {' '}
+      <IconButton onClick={() => handleEventClick(event)}>
+        <InfoIcon /> {/* Örnek: Bilgi ikonu */}
+      </IconButton>
+    </div>
+  );
+  const handleEventClick = (event) => {
+    // Burada, etkinliğe tıklanınca yapılacak işlemler
+    console.log("Etkinlik detayı:", event);
+    // Burada istediğiniz başka bir veriyi çekebilirsiniz
+  };
+
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-    <Typography variant="h4" gutterBottom sx={{ textAlign: 'center' }}>
-      Halı Sahalarım
-    </Typography>
-    <Grid container spacing={3} sx={{ justifyContent: 'center' }}>
-      {footballFields.map((field) => (
-        <Grid item xs={12} sm={6} md={4} lg={6} key={field.id} sx={{ display: 'flex', justifyContent: 'center' }}>
-          <Card sx={{ maxWidth: 345, mb: 4, boxShadow: 3 }}>
-            <CardMedia
-              component="img"
-              height="140"
-              image={image} // Sahaya ait resim URL'si ile değiştirin
-              alt={field.name}
-            />
-            <CardContent>
-              <Typography gutterBottom variant="h5" component="div" sx={{ textAlign: 'center' }}>
-                {field.name}
-              </Typography>
-              <Typography variant="body1" sx={{ textAlign: 'center' }}>
-                {field.city}, {field.district}
-              </Typography>
-            </CardContent>
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', p: 2 }}>
-              <IconButton onClick={() => handleEditClick(field.id)}
-              sx={{ml: "auto"}}>
-                <EditIcon />
+      <Typography variant="h4" gutterBottom sx={{ textAlign: "center" }}>
+        Halı Sahalarım
+      </Typography>
+      <Grid container spacing={3} sx={{ justifyContent: "center" }}>
+        {footballFields.map((field) => (
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            md={4}
+            lg={6}
+            key={field.id}
+            sx={{ display: "flex", justifyContent: "center" }}
+          >
+            <Card sx={{ maxWidth: 345, mb: 4, boxShadow: 3 }}>
+              <IconButton
+                onClick={() => handleInspectClick(field.id)}
+                sx={{ ml: "auto" }}
+              >
+                <VisibilityIcon />
               </IconButton>
-            </Box>
-          </Card>
-        </Grid>
-      ))}
-    </Grid>
+              <CardMedia
+                component="img"
+                height="140"
+                image={image} // Sahaya ait resim URL'si ile değiştirin
+                alt={field.name}
+              />
+              <CardContent>
+                <Typography
+                  gutterBottom
+                  variant="h5"
+                  component="div"
+                  sx={{ textAlign: "center" }}
+                >
+                  {field.name}
+                </Typography>
+                <Typography variant="body1" sx={{ textAlign: "center" }}>
+                  {field.city}, {field.district}
+                </Typography>
+              </CardContent>
+              <Box sx={{ display: "flex", justifyContent: "flex-end", p: 2 }}>
+                <IconButton
+                  onClick={() => handleEditClick(field.id)}
+                  sx={{ ml: "auto" }}
+                >
+                  <EditIcon />
+                </IconButton>
+              </Box>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+      <Modal open={openInspectModal} onClose={() => setOpenInspectModal(false)}>
+  <Box sx={modalStyle}>
+    <Typography variant="h6">{`Saha ID: ${currentFieldId} - Doluluk Bilgileri`}</Typography>
+    <Calendar
+  localizer={localizer}
+  events={rentEvents}
+  startAccessor="start"
+  endAccessor="end"
+  style={{ height: 500 }}
+  views={['agenda']}
+  components={{
+    agenda: {
+      event: CustomAgendaEvent
+    }
+  }}
+  defaultView="agenda"
+/>
+  </Box>
+</Modal>
       <Modal open={openModal} onClose={handleCloseModal}>
         <Box sx={modalStyle}>
           <Typography variant="h6">Halı Saha Bilgilerini Düzenle</Typography>
