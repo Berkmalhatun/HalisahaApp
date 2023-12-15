@@ -255,7 +255,7 @@ const SearchPage = () => {
     setSelectedFootballFieldId(fieldId);
     try {
       const response = await fetch(
-        `http://localhost:4042/rent-football-field/rent-football-field-hours-filter?footballFieldId=${fieldId}`
+        `http://localhost:4042/rent-football-field/rent-football-field-hours-filter-filled?footballFieldId=${fieldId}`
       );
       if (response.ok) {
         const occupiedHours = await response.json();
@@ -310,7 +310,7 @@ const SearchPage = () => {
   const fetchAndMarkOccupiedHours = async (fieldId, date) => {
     try {
       const response = await fetch(
-        `http://localhost:4042/rent-football-field/rent-football-field-hours-filter?footballFieldId=${fieldId}`
+        `http://localhost:4042/rent-football-field/rent-football-field-hours-filter-filled?footballFieldId=${fieldId}`
       );
       if (response.ok) {
         const occupiedHours = await response.json();
@@ -398,11 +398,12 @@ const SearchPage = () => {
         // İşlem başarılı olduğunda
         const responseData = await response.json();
         console.log("Rent successful", responseData);
+        console.log("Kiralanan saat:", selectedHour, "Tarih:", selectedDate);
 
         // Diyalogu ve başarı snackbar'ını kapat
         setOpenDialog(false);
         setOpenSnackbar(true);
-
+        fetchAndMarkOccupiedHours(selectedFootballFieldId, selectedDate);
         // İsteğe bağlı: Başarı mesajını göstermek için bir zaman aşımı ayarlayabilirsiniz
         setTimeout(() => {
           setOpenSnackbar(false);
