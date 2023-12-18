@@ -11,6 +11,7 @@ import {
   Container,
   Grid,
   Card,
+  CardActionArea, 
   CardContent,
   Typography,
   CardMedia,
@@ -25,6 +26,8 @@ import InfoIcon from '@mui/icons-material/Info';
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import image from "./indir.jpg";
+import 'moment/locale/tr'; // Türkçe yerelleştirmeyi import edin
+moment.locale('tr'); // Global olarak Türkçe yerelleştirmeyi ayarlayın
 const FootballFieldsPage = () => {
   const [footballFields, setFootballFields] = useState([]);
   const [openModal, setOpenModal] = useState(false);
@@ -160,6 +163,27 @@ const FootballFieldsPage = () => {
     console.log("Etkinlik detayı:", event);
     // Burada istediğiniz başka bir veriyi çekebilirsiniz
   };
+  const formats = {
+    timeGutterFormat: (date, culture, localizer) => localizer.format(date, 'HH:mm', culture),
+    eventTimeRangeFormat: ({ start, end }, culture, localizer) => {
+      let s = localizer.format(start, 'HH:mm', culture);
+      let e = localizer.format(end, 'HH:mm', culture);
+      return `${s} - ${e}`;
+    },
+    agendaTimeRangeFormat: ({ start, end }, culture, localizer) => {
+      let s = localizer.format(start, 'HH:mm', culture);
+      let e = localizer.format(end, 'HH:mm', culture);
+      return `${s} - ${e}`;
+    },
+    // Diğer formatlar gerekiyorsa buraya eklenebilir...
+  };
+  const messages = {
+    agenda: 'Ajanda',
+  date: 'Tarih',
+  time: 'Saat',
+  event: 'Uygunluk',
+  showMore: total => `+${total} daha göster`
+};
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
@@ -219,19 +243,23 @@ const FootballFieldsPage = () => {
   <Box sx={modalStyle}>
     <Typography variant="h6">{`Saha ID: ${currentFieldId} - Doluluk Bilgileri`}</Typography>
     <Calendar
-  localizer={localizer}
-  events={rentEvents}
-  startAccessor="start"
-  endAccessor="end"
-  style={{ height: 500 }}
-  views={['agenda']}
-  components={{
-    agenda: {
-      event: CustomAgendaEvent
-    }
-  }}
-  defaultView="agenda"
-/>
+   localizer={localizer}
+   events={rentEvents}
+   startAccessor="start"
+   endAccessor="end"
+   style={{ height: 500 }}
+   messages={messages}
+   views={['agenda']}
+   culture='tr'
+   formats={formats}
+   components={{
+     agenda: {
+       event: CustomAgendaEvent
+     }
+   }}
+   defaultView="agenda"
+ />
+ 
   </Box>
 </Modal>
       <Modal open={openModal} onClose={handleCloseModal}>
@@ -304,5 +332,4 @@ const FootballFieldsPage = () => {
     </Container>
   );
 };
-
 export default FootballFieldsPage;
