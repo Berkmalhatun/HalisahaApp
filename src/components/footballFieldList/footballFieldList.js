@@ -4,14 +4,14 @@ import axios from "axios";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
-import { Calendar, momentLocalizer } from 'react-big-calendar';
-import moment from 'moment';
-import 'react-big-calendar/lib/css/react-big-calendar.css';
+import { Calendar, momentLocalizer } from "react-big-calendar";
+import moment from "moment";
+import "react-big-calendar/lib/css/react-big-calendar.css";
 import {
   Container,
   Grid,
   Card,
-  CardActionArea, 
+  CardActionArea,
   CardContent,
   Typography,
   CardMedia,
@@ -22,12 +22,12 @@ import {
   Button,
 } from "@mui/material";
 import SportsSoccerIcon from "@mui/icons-material/SportsSoccer";
-import InfoIcon from '@mui/icons-material/Info';
+import InfoIcon from "@mui/icons-material/Info";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import image from "./indir.jpg";
-import 'moment/locale/tr'; // Türkçe yerelleştirmeyi import edin
-moment.locale('tr'); // Global olarak Türkçe yerelleştirmeyi ayarlayın
+import "moment/locale/tr"; // Türkçe yerelleştirmeyi import edin
+moment.locale("tr"); // Global olarak Türkçe yerelleştirmeyi ayarlayın
 const FootballFieldsPage = () => {
   const [footballFields, setFootballFields] = useState([]);
   const [openModal, setOpenModal] = useState(false);
@@ -142,17 +142,16 @@ const FootballFieldsPage = () => {
     date.setUTCHours(date.getUTCHours() - 3);
     return date;
   };
-  console.log('rentTimes:', rentTimes);
+  console.log("rentTimes:", rentTimes);
   const rentEvents = rentTimes.map((rentTime) => ({
-    title: 'Dolu',
+    title: "Dolu",
     start: convertUTCtoTurkeyTime(rentTime.startDate),
     end: convertUTCtoTurkeyTime(rentTime.endDate),
-    allDay: false
+    allDay: false,
   }));
   const CustomAgendaEvent = ({ event }) => (
     <div>
-      <span>{event.title}</span>
-      {' '}
+      <span>{event.title}</span>{" "}
       <IconButton onClick={() => handleEventClick(event)}>
         <InfoIcon /> {/* Örnek: Bilgi ikonu */}
       </IconButton>
@@ -164,26 +163,27 @@ const FootballFieldsPage = () => {
     // Burada istediğiniz başka bir veriyi çekebilirsiniz
   };
   const formats = {
-    timeGutterFormat: (date, culture, localizer) => localizer.format(date, 'HH:mm', culture),
+    timeGutterFormat: (date, culture, localizer) =>
+      localizer.format(date, "HH:mm", culture),
     eventTimeRangeFormat: ({ start, end }, culture, localizer) => {
-      let s = localizer.format(start, 'HH:mm', culture);
-      let e = localizer.format(end, 'HH:mm', culture);
+      let s = localizer.format(start, "HH:mm", culture);
+      let e = localizer.format(end, "HH:mm", culture);
       return `${s} - ${e}`;
     },
     agendaTimeRangeFormat: ({ start, end }, culture, localizer) => {
-      let s = localizer.format(start, 'HH:mm', culture);
-      let e = localizer.format(end, 'HH:mm', culture);
+      let s = localizer.format(start, "HH:mm", culture);
+      let e = localizer.format(end, "HH:mm", culture);
       return `${s} - ${e}`;
     },
     // Diğer formatlar gerekiyorsa buraya eklenebilir...
   };
   const messages = {
-    agenda: 'Ajanda',
-  date: 'Tarih',
-  time: 'Saat',
-  event: 'Uygunluk',
-  showMore: total => `+${total} daha göster`
-};
+    agenda: "Ajanda",
+    date: "Tarih",
+    time: "Saat",
+    event: "Uygunluk",
+    showMore: (total) => `+${total} daha göster`,
+  };
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
@@ -240,28 +240,27 @@ const FootballFieldsPage = () => {
         ))}
       </Grid>
       <Modal open={openInspectModal} onClose={() => setOpenInspectModal(false)}>
-  <Box sx={modalStyle}>
-    <Typography variant="h6">{`Saha ID: ${currentFieldId} - Doluluk Bilgileri`}</Typography>
-    <Calendar
-   localizer={localizer}
-   events={rentEvents}
-   startAccessor="start"
-   endAccessor="end"
-   style={{ height: 500 }}
-   messages={messages}
-   views={['agenda']}
-   culture='tr'
-   formats={formats}
-   components={{
-     agenda: {
-       event: CustomAgendaEvent
-     }
-   }}
-   defaultView="agenda"
- />
- 
-  </Box>
-</Modal>
+        <Box sx={modalStyle}>
+          <Typography variant="h6">{`Saha ID: ${currentFieldId} - Doluluk Bilgileri`}</Typography>
+          <Calendar
+            localizer={localizer}
+            events={rentEvents}
+            startAccessor="start"
+            endAccessor="end"
+            style={{ height: 500 }}
+            messages={messages}
+            views={["agenda"]}
+            culture="tr"
+            formats={formats}
+            components={{
+              agenda: {
+                event: CustomAgendaEvent,
+              },
+            }}
+            defaultView="agenda"
+          />
+        </Box>
+      </Modal>
       <Modal open={openModal} onClose={handleCloseModal}>
         <Box sx={modalStyle}>
           <Typography variant="h6">Halı Saha Bilgilerini Düzenle</Typography>
