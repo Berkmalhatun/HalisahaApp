@@ -8,6 +8,9 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import PhoneIcon from "@mui/icons-material/Phone";
 import EmailIcon from "@mui/icons-material/Email";
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -20,6 +23,7 @@ import {
   Container,
   Grid,
   Card,
+  Paper,
   CardActionArea,
   CardContent,
   Typography,
@@ -37,6 +41,12 @@ import EditIcon from "@mui/icons-material/Edit";
 import image from "./indir.jpg";
 import "moment/locale/tr"; // Türkçe yerelleştirmeyi import edin
 moment.locale("tr"); // Global olarak Türkçe yerelleştirmeyi ayarlayın
+const initialHours = Array.from({ length: 24 }, (_, index) => ({
+  label: `${index}:00 - ${index + 1}:00`,
+  value: index,
+  isOccupied: false, // Bu özellik daha sonra saatlerin dolu olup olmadığını belirlemek için kullanılabilir
+}));
+
 const FootballFieldsPage = () => {
   const [footballFields, setFootballFields] = useState([]);
   const [openModal, setOpenModal] = useState(false);
@@ -47,6 +57,14 @@ const FootballFieldsPage = () => {
   const localizer = momentLocalizer(moment);
   const [userDetails, setUserDetails] = useState({});
   const [userDetailsOpen, setUserDetailsOpen] = useState(false);
+  const [openGuestRentDialog, setOpenGuestRentDialog] = useState(false);
+  const [selectedFootballFieldId, setSelectedFootballFieldId] = useState(null);
+  const [hours, setHours] = useState(initialHours); // Saat aralıkları için state
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDateTime, setSelectedDateTime] = useState(new Date());
+  const [selectedHour, setSelectedHour] = useState(hours[0].label);
+const [openDialog, setOpenDialog] = useState(false);
+const [activeHourIndex, setActiveHourIndex] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const fieldsPerPage = 6; // Her sayfada gösterilecek saha sayısı
 
@@ -56,10 +74,226 @@ const FootballFieldsPage = () => {
     indexOfFirstField,
     indexOfLastField
   );
+  const [formData, setFormData] = useState({
+    name: '',
+    surname: '',
+    telNo: '',
+    email: ''
+  });
 
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
   const handleChangePage = (event, newPage) => {
     setCurrentPage(newPage);
   };
+  const handleHourClick = (index) => {
+    const hour = hours[index];
+    if (!hour.isOccupied) {
+      setSelectedHour(hour.label);
+      setActiveHourIndex(index); // Seçili olan saat diliminin index'ini state'e kaydet
+    } else {
+      alert('Bu saat aralığı doludur. Lütfen başka bir saat seçin.');
+    }
+  };
+  const handleDateTimeChange = (dateTime) => {
+    setSelectedDateTime(dateTime);
+  };
+  const handleOpenGuestRentDialog = (fieldId) => {
+    console.log("Diyalog açılıyor, saha ID:", fieldId);
+    setSelectedFootballFieldId(fieldId);
+    fetchAndMarkOccupiedHours(fieldId, selectedDate);
+    setOpenGuestRentDialog(true);
+};
+
+  const handleCloseGuestRentDialog = () => {
+    setOpenGuestRentDialog(false);
+  };
+  const fetchAndMarkOccupiedHours = async (fieldId, date) => {
+    try {
+      const response = await fetch(
+        `http://localhost:4042/rent-football-field/rent-football-field-hours-filter-filled?footballFieldId=${fieldId}`
+      );
+      if (response.ok) {
+        const occupiedHours = await response.json();
+        markOccupiedHours(occupiedHours, date);
+      } else {
+        console.error("Error:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+  useEffect(() => {
+    // selectedDate değiştiğinde bu fonksiyon çalışır
+    const fetchOccupiedHours = async () => {
+      if (selectedFootballFieldId) {
+        try {
+          const response = await fetch(
+            `http://localhost:4042/rent-football-field/rent-football-field-hours-filter-filled?footballFieldId=${selectedFootballFieldId}`
+          );
+          if (response.ok) {
+            const occupiedHours = await response.json();
+            markOccupiedHours(occupiedHours, selectedDate);
+          } else {
+            console.error("Error:", response.statusText);
+          }
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      }
+    };
+  
+    fetchOccupiedHours();
+  }, [selectedDate, selectedFootballFieldId]); // Bu useEffect, selectedDate veya selectedFootballFieldId değiştiğinde çalışır
+  
+  
+  const convertToLocaleTime = (dateString) => {
+    const dateUTC = new Date(dateString);
+    return new Date(dateUTC.getTime() + dateUTC.getTimezoneOffset() * 60000);
+  };
+  const markOccupiedHours = (occupiedHours, selectedDate) => {
+    const updatedHours = initialHours.map((hour) => {
+      const hourRange = hour.label.split(" - ");
+      const startHour = parseInt(hourRange[0], 10);
+
+      const isOccupied = occupiedHours.some((occupiedHour) => {
+        const startDateLocal = convertToLocaleTime(occupiedHour.startDate);
+        // const endDateLocal = convertToLocaleTime(occupiedHour.endDate);
+
+        return (
+          startDateLocal.getDate() === selectedDate.getDate() &&
+          startDateLocal.getMonth() === selectedDate.getMonth() &&
+          startDateLocal.getFullYear() === selectedDate.getFullYear() &&
+          startDateLocal.getHours() === startHour
+        );
+      });
+
+      return {
+        ...hour,
+        isOccupied: isOccupied,
+      };
+    });
+
+    setHours(updatedHours);
+  };
+  const handleDateChange = (newDate) => {
+    setSelectedDate(newDate);
+    if (selectedFootballFieldId) {
+      fetchAndMarkOccupiedHours(selectedFootballFieldId, newDate);
+    }
+  };
+  const renderTimeSlots = () => (
+    <Grid container spacing={2}>
+      {hours.map((hour, index) => (
+        <Grid item xs={4} sm={2} key={index}>
+          <Paper 
+            elevation={3} 
+            style={{
+              padding: 10,
+              backgroundColor: hour.isOccupied 
+                ? '#f44336' 
+                : index === activeHourIndex 
+                ? '#4caf50' // Yeşil renk seçilen saat aralığı için
+                : '#e0e0e0',
+              color: hour.isOccupied ? 'white' : 'black',
+              cursor: hour.isOccupied ? 'not-allowed' : 'pointer',
+              textAlign: 'center'
+            }}
+            onClick={() => handleHourClick(index)}
+          >
+            {hour.label}
+          </Paper>
+        </Grid>
+      ))}
+    </Grid>
+  );
+  // Saat Aralığı Seçimi
+const handleHourSelection = (index) => {
+  const newHours = [...hours];
+  newHours[index].isOccupied = !newHours[index].isOccupied; // Bu örnek sadece dolu/boş durumunu değiştirir
+  setHours(newHours);
+};
+const renderGuestRentDialog = () => (
+  <Dialog open={openGuestRentDialog} onClose={handleCloseGuestRentDialog} fullWidth maxWidth="lg">
+  <DialogTitle>Misafir Kiralama</DialogTitle>
+  <DialogContent>
+    <form onSubmit={handleGuestRentSubmit}>
+      <TextField name="name" value={formData.name} onChange={handleChange} label="İsim" fullWidth margin="normal" />
+      <TextField name="surname" value={formData.surname} onChange={handleChange} label="Soyisim" fullWidth margin="normal" />
+      <TextField name="telNo" value={formData.telNo} onChange={handleChange} label="Telefon Numarası" fullWidth margin="normal" />
+      <TextField name="email" value={formData.email} onChange={handleChange} label="Email" fullWidth margin="normal" />
+      <DatePicker selected={selectedDate} onChange={handleDateChange} dateFormat="dd/MM/yyyy" />
+      {renderTimeSlots()}
+      <Button type="submit" variant="contained" color="primary" fullWidth>Kiralama Yap</Button>
+    </form>
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={() => setOpenGuestRentDialog(false)} color="secondary">İptal</Button>
+  </DialogActions>
+</Dialog>
+);
+// footballFieldid: selectedFootballFieldId, // Bu ID'yi nasıl elde ettiğinize göre ayarlayın
+const handleGuestRentSubmit = async (e) => {
+  e.preventDefault();
+  if (!selectedHour || !selectedDate) {
+    alert('Lütfen tarih ve saat seçin');
+    return;
+  }
+
+  // Seçilen saat aralığını ve tarihi kullanarak UTC'de startDate ve endDate oluşturun
+  const [startHour, endHour] = selectedHour.split(' - ').map(h => parseInt(h, 10));
+  const startDateUTC = new Date(Date.UTC(
+    selectedDate.getFullYear(),
+    selectedDate.getMonth(),
+    selectedDate.getDate(),
+    startHour,
+    0,
+    0
+  ));
+  const endDateUTC = new Date(Date.UTC(
+    selectedDate.getFullYear(),
+    selectedDate.getMonth(),
+    selectedDate.getDate(),
+    endHour,
+    0,
+    0
+  ));
+  // API isteği için payload oluşturma
+  const payload = {
+    startDate: startDateUTC.toISOString(),
+    endDate: endDateUTC.toISOString(),
+    footballFieldid: selectedFootballFieldId,
+    ...formData
+  };
+
+  // Gönderilecek verileri konsolda göster
+  console.log("Gönderilecek payload:", payload);
+  console.log("Kiralanan saat:", selectedHour, "Tarih:", selectedDate.toLocaleString());
+
+  // API isteği yapma
+  try {
+    const response = await fetch("http://localhost:4042/rent-football-field/rent-football-field-guest", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (response.ok) {
+      const responseData = await response.json();
+      console.log("Kiralama başarılı:", responseData);
+      alert("Kiralama başarılı!");
+    } else {
+      throw new Error(`API hatası: ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Kiralama işlemi sırasında hata oluştu:", error);
+    alert("Kiralama sırasında bir hata oluştu.");
+  }
+};
+
   useEffect(() => {
     const fetchFootballFields = async () => {
       const token = localStorage.getItem("token");
@@ -251,6 +485,13 @@ const FootballFieldsPage = () => {
   next: 'Sonra',
     showMore: (total) => `+${total} daha göster`,
   };
+  const handleGuestRentClick = (fieldId) => {
+    // Misafir kiralama formunu açma veya başka bir işlem yapma
+    console.log("Misafir olarak kiralama işlemi için saha ID:", fieldId);
+    setOpenDialog(true);
+    // İşlemler...
+  };
+
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Typography variant="h4" gutterBottom sx={{ textAlign: "center" }}>
@@ -270,6 +511,9 @@ const FootballFieldsPage = () => {
               >
                 <VisibilityIcon />
               </IconButton>
+              <IconButton onClick={() => handleOpenGuestRentDialog(field.id)} sx={{ ml: "auto" }}>
+      <PersonAddIcon />
+    </IconButton>
               <CardMedia
   component="img"
   sx={{ height: 140, width: '100%', objectFit: 'cover' }}
@@ -300,6 +544,7 @@ const FootballFieldsPage = () => {
             </Card>
           </Grid>
         ))}
+         {renderGuestRentDialog()}
       </Grid>
       <Box sx={{ textAlign: 'left', mt: 2 }}>
   <Pagination
