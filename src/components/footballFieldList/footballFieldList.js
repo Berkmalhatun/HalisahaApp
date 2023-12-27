@@ -47,6 +47,26 @@ const initialHours = Array.from({ length: 24 }, (_, index) => ({
   isOccupied: false, // Bu özellik daha sonra saatlerin dolu olup olmadığını belirlemek için kullanılabilir
 }));
 
+const TimeSlotButton = ({ hour, index, onSelect, isSelected, isOccupied }) => {
+  const buttonStyle = {
+    width: '100%',
+    height: '100%',
+    backgroundColor: isOccupied ? '#f44336' : isSelected ? '#4caf50' : undefined,
+    color: isOccupied ? '#fff' : isSelected ? '#fff' : undefined,
+    borderColor: isSelected ? '#4caf50' : undefined,
+  };
+
+  return (
+    <Button
+      variant={isSelected ? "contained" : "outlined"}
+      style={buttonStyle}
+      disabled={isOccupied}
+      onClick={() => onSelect(index)}
+    >
+      {hour.label}
+    </Button>
+  );
+};
 const FootballFieldsPage = () => {
   const [footballFields, setFootballFields] = useState([]);
   const [openModal, setOpenModal] = useState(false);
@@ -177,37 +197,28 @@ const [activeHourIndex, setActiveHourIndex] = useState(null);
 
     setHours(updatedHours);
   };
-  const handleDateChange = (newDate) => {
-    setSelectedDate(newDate);
-    if (selectedFootballFieldId) {
-      fetchAndMarkOccupiedHours(selectedFootballFieldId, newDate);
-    }
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+    setActiveHourIndex(null); // Tarih değiştiğinde seçili saati sıfırlayalım
+    fetchAndMarkOccupiedHours(selectedFootballFieldId, date);
   };
-  const renderTimeSlots = () => (
-    <Grid container spacing={2}>
-      {hours.map((hour, index) => (
-        <Grid item xs={4} sm={2} key={index}>
-          <Paper 
-            elevation={3} 
-            style={{
-              padding: 10,
-              backgroundColor: hour.isOccupied 
-                ? '#f44336' 
-                : index === activeHourIndex 
-                ? '#4caf50' // Yeşil renk seçilen saat aralığı için
-                : '#e0e0e0',
-              color: hour.isOccupied ? 'white' : 'black',
-              cursor: hour.isOccupied ? 'not-allowed' : 'pointer',
-              textAlign: 'center'
-            }}
-            onClick={() => handleHourClick(index)}
-          >
-            {hour.label}
-          </Paper>
-        </Grid>
-      ))}
-    </Grid>
-  );
+  const renderTimeSlots = () => {
+    return (
+      <Grid container spacing={2}>
+        {hours.map((hour, index) => (
+          <Grid item xs={4} sm={2} key={hour.label}>
+            <TimeSlotButton
+              hour={hour}
+              index={index}
+              isSelected={activeHourIndex === index}
+              isOccupied={hour.isOccupied}
+              onSelect={handleHourClick}
+            />
+          </Grid>
+        ))}
+      </Grid>
+    );
+  };
   // Saat Aralığı Seçimi
 const handleHourSelection = (index) => {
   const newHours = [...hours];
@@ -215,29 +226,88 @@ const handleHourSelection = (index) => {
   setHours(newHours);
 };
 const renderGuestRentDialog = () => (
-  <Dialog open={openGuestRentDialog} onClose={handleCloseGuestRentDialog} fullWidth maxWidth="lg">
-  <DialogTitle>Misafir Kiralama</DialogTitle>
-  <DialogContent>
+  <Dialog open={openGuestRentDialog} onClose={handleCloseGuestRentDialog} fullWidth maxWidth="md">
+    <DialogTitle>Misafir Kiralama</DialogTitle>
     <form onSubmit={handleGuestRentSubmit}>
-      <TextField name="name" value={formData.name} onChange={handleChange} label="İsim" fullWidth margin="normal" />
-      <TextField name="surname" value={formData.surname} onChange={handleChange} label="Soyisim" fullWidth margin="normal" />
-      <TextField name="telNo" value={formData.telNo} onChange={handleChange} label="Telefon Numarası" fullWidth margin="normal" />
-      <TextField name="email" value={formData.email} onChange={handleChange} label="Email" fullWidth margin="normal" />
-      <DatePicker selected={selectedDate} onChange={handleDateChange} dateFormat="dd/MM/yyyy" />
-      {renderTimeSlots()}
-      <Button type="submit" variant="contained" color="primary" fullWidth>Kiralama Yap</Button>
+      <DialogContent>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              label="İsim"
+              fullWidth
+              margin="normal"
+              required
+              error={!formData.name}
+              helperText={!formData.name ? "İsim alanı zorunludur." : ""}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              name="surname"
+              value={formData.surname}
+              onChange={handleChange}
+              label="Soyisim"
+              fullWidth
+              margin="normal"
+              required
+              error={!formData.surname}
+              helperText={!formData.surname ? "Soyisim alanı zorunludur." : ""}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              name="telNo"
+              value={formData.telNo}
+              onChange={handleChange}
+              label="Telefon Numarası"
+              fullWidth
+              margin="normal"
+              error={!formData.telNo && !formData.email}
+              helperText={!formData.telNo && !formData.email ? "Telefon veya email zorunludur." : ""}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              label="Email"
+              fullWidth
+              margin="normal"
+              error={!formData.telNo && !formData.email}
+              helperText={!formData.telNo && !formData.email ? "Telefon veya email zorunludur." : ""}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <DatePicker
+              selected={selectedDate} onDateChange={handleDateChange}
+              onChange={handleDateChange}
+              dateFormat="dd/MM/yyyy"
+              customInput={<TextField fullWidth required />}
+              wrapperClassName="datePicker"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            {renderTimeSlots()}
+          </Grid>
+        </Grid>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleCloseGuestRentDialog} color="primary">İptal</Button>
+        <Button type="submit" variant="contained" color="primary">Kiralama Yap</Button>
+      </DialogActions>
     </form>
-  </DialogContent>
-  <DialogActions>
-    <Button onClick={() => setOpenGuestRentDialog(false)} color="secondary">İptal</Button>
-  </DialogActions>
-</Dialog>
+  </Dialog>
 );
 // footballFieldid: selectedFootballFieldId, // Bu ID'yi nasıl elde ettiğinize göre ayarlayın
 const handleGuestRentSubmit = async (e) => {
   e.preventDefault();
-  if (!selectedHour || !selectedDate) {
-    alert('Lütfen tarih ve saat seçin');
+  // Telefon veya email alanlarından en az biri doldurulmuş mu diye kontrol et
+  if (!formData.telNo && !formData.email) {
+    alert('Telefon numarası veya email adresi alanlarından en az birini doldurmalısınız.');
     return;
   }
 
@@ -282,6 +352,7 @@ const handleGuestRentSubmit = async (e) => {
     });
 
     if (response.ok) {
+      await fetchAndMarkOccupiedHours(selectedFootballFieldId, selectedDate);
       const responseData = await response.json();
       console.log("Kiralama başarılı:", responseData);
       alert("Kiralama başarılı!");
@@ -375,6 +446,7 @@ const handleGuestRentSubmit = async (e) => {
     boxShadow: 24,
     p: 4,
   };
+  // Userid boş ise bu methoddan donen veriler kullanılacak.
   const handleInspectClick = async (fieldId) => {
     setCurrentFieldId(fieldId);
     try {
