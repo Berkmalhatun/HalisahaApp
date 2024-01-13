@@ -1,27 +1,76 @@
-import React, { useState, useEffect } from 'react';
-import {jwtDecode} from 'jwt-decode';
-import { TextField, Button, Container, Typography, Box, Card, CardContent } from '@mui/material';
+import React, { useState, useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
+import {
+  TextField,
+  Button,
+  Container,
+  Typography,
+  Box,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
+} from "@mui/material";
 
 const FootballFieldForm = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    telephoneNumber: '',
-    city: '',
-    district: '',
-    address: '',
-    price: '',
-    email: '', 
-    userid: '', // Token'dan alınacak
-    image: null
+    name: "",
+    telephoneNumber: "",
+    city: "",
+    district: "",
+    address: "",
+    price: "",
+    email: "",
+    userid: "", // Token'dan alınacak
+    image: null,
   });
-
+  const [cities, setCities] = useState([]);
+  const [districts, setDistricts] = useState([]);
+  const [selectedCity, setSelectedCity] = useState("");
+  const [selectedDistrict, setSelectedDistrict] = useState("");
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    fetch("http://localhost:4042/city/{cities}/city")
+      .then((response) => response.json())
+      .then((data) => {
+        setCities(data);
+      })
+      .catch((error) => console.error("Error fetching cities:", error));
+  }, []);
+  useEffect(() => {
+    // Kullanıcı yeni bir şehir seçtiğinde çalışacak kod
+    if (selectedCity) {
+      // Seçilen şehire göre ilçeleri çeken API isteği
+      fetch(`http://localhost:4042/city/${selectedCity}/districts`)
+        .then((response) => response.json())
+        .then((data) => {
+          setDistricts(data); // API'den gelen ilçeleri setDistricts ile güncelle
+        })
+        .catch((error) => {
+          console.error("Error fetching districts:", error);
+          // Hata durumunda yapılacak işlemler
+        });
+    }
+
+    // Her seferinde şehir değiştiğinde ilçe seçimini sıfırla
+    setSelectedDistrict("");
+  }, [selectedCity]); // Bu useEffect, selectedCity değiştiğinde çalışır
+  const handleCityChange = (event) => {
+    setSelectedCity(event.target.value);
+    setFormData({ ...formData, city: event.target.value }); // Şehir seçildiğinde formData'yı güncelle
+    setSelectedDistrict(""); // Şehir değiştiğinde ilçeyi sıfırla
+  };
+
+  const handleDistrictChange = (event) => {
+    setSelectedDistrict(event.target.value);
+    setFormData({ ...formData, district: event.target.value }); // İlçe seçildiğinde formData'yı güncelle
+  };
+  useEffect(() => {
+    const token = localStorage.getItem("token");
     if (token) {
       const decoded = jwtDecode(token);
-      setFormData(prevFormData => ({
+      setFormData((prevFormData) => ({
         ...prevFormData,
-        userid: decoded.id
+        userid: decoded.id,
       }));
     }
   }, []);
@@ -41,29 +90,31 @@ const FootballFieldForm = () => {
     for (const key in formData) {
       formDataToSend.append(key, formData[key]);
     }
-
     try {
-      const response = await fetch('http://localhost:4041/user/create-football-field', {
-        method: 'POST',
-        body: formDataToSend
-      });
+      const response = await fetch(
+        "http://localhost:4041/user/create-football-field",
+        {
+          method: "POST",
+          body: formDataToSend,
+        }
+      );
 
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        throw new Error("Network response was not ok");
       }
 
       const data = await response.json();
       console.log(data);
-      alert('Halı saha başarıyla eklendi!');
+      alert("Halı saha başarıyla eklendi!");
     } catch (error) {
-      console.error('Halı saha eklerken bir hata oluştu', error);
-      alert('Halı saha eklenirken bir hata oluştu.');
+      console.error("Halı saha eklerken bir hata oluştu", error);
+      alert("Halı saha eklenirken bir hata oluştu.");
     }
   };
 
   return (
     <Container maxWidth="sm">
-      <Box sx={{ mt: 4, mb: 4,p:3, bgcolor:"white" }}>
+      <Box sx={{ mt: 4, mb: 4, p: 3, bgcolor: "white" }}>
         <Typography variant="h4" gutterBottom>
           Halı Saha Ekle
         </Typography>
@@ -86,7 +137,7 @@ const FootballFieldForm = () => {
             required
             onChange={handleInputChange}
           />
-                    <TextField
+          <TextField
             label="Email"
             name="email"
             variant="outlined"
@@ -95,24 +146,36 @@ const FootballFieldForm = () => {
             required
             onChange={handleInputChange}
           />
-          <TextField
-            label="Şehir"
-            name="city"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            required
-            onChange={handleInputChange}
-          />
-          <TextField
-            label="İlçe"
-            name="district"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            required
-            onChange={handleInputChange}
-          />
+          <FormControl fullWidth margin="normal">
+            <InputLabel>Şehir</InputLabel>
+            <Select
+              value={selectedCity}
+              onChange={handleCityChange}
+              label="Şehir"
+              name="city"
+            >
+              {cities.map((city) => (
+                <MenuItem key={city} value={city}>
+                  {city}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl fullWidth margin="normal">
+            <InputLabel>İlçe</InputLabel>
+            <Select
+              value={selectedDistrict}
+              onChange={handleDistrictChange}
+              label="İlçe"
+              name="district"
+            >
+              {districts.map((district) => (
+                <MenuItem key={district} value={district}>
+                  {district}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
           <TextField
             label="Adres"
             name="address"
