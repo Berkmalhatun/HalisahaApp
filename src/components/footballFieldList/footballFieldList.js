@@ -9,7 +9,8 @@ import ListItemText from "@mui/material/ListItemText";
 import PhoneIcon from "@mui/icons-material/Phone";
 import EmailIcon from "@mui/icons-material/Email";
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import DatePicker from "react-datepicker";
+import DatePicker, { registerLocale } from "react-datepicker";
+import tr from 'date-fns/locale/tr';
 import "react-datepicker/dist/react-datepicker.css";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -41,6 +42,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import image from "./indir.jpg";
 import "moment/locale/tr"; // Türkçe yerelleştirmeyi import edin
 moment.locale("tr"); // Global olarak Türkçe yerelleştirmeyi ayarlayın
+registerLocale('tr', tr);
 const initialHours = Array.from({ length: 24 }, (_, index) => ({
   label: `${index}:00 - ${index + 1}:00`,
   value: index,
@@ -285,6 +287,7 @@ const renderGuestRentDialog = () => (
             <DatePicker
               selected={selectedDate} onDateChange={handleDateChange}
               onChange={handleDateChange}
+              locale="tr"
               dateFormat="dd/MM/yyyy"
               customInput={<TextField fullWidth required />}
               wrapperClassName="datePicker"
