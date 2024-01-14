@@ -38,32 +38,28 @@ const FootballFieldForm = () => {
       .catch((error) => console.error("Error fetching cities:", error));
   }, []);
   useEffect(() => {
-    // Kullanıcı yeni bir şehir seçtiğinde çalışacak kod
     if (selectedCity) {
-      // Seçilen şehire göre ilçeleri çeken API isteği
       fetch(`http://localhost:4042/city/${selectedCity}/districts`)
         .then((response) => response.json())
         .then((data) => {
-          setDistricts(data); // API'den gelen ilçeleri setDistricts ile güncelle
+          setDistricts(data); 
         })
         .catch((error) => {
           console.error("Error fetching districts:", error);
-          // Hata durumunda yapılacak işlemler
         });
     }
 
-    // Her seferinde şehir değiştiğinde ilçe seçimini sıfırla
     setSelectedDistrict("");
-  }, [selectedCity]); // Bu useEffect, selectedCity değiştiğinde çalışır
+  }, [selectedCity]);
   const handleCityChange = (event) => {
     setSelectedCity(event.target.value);
-    setFormData({ ...formData, city: event.target.value }); // Şehir seçildiğinde formData'yı güncelle
-    setSelectedDistrict(""); // Şehir değiştiğinde ilçeyi sıfırla
+    setFormData({ ...formData, city: event.target.value });
+    setSelectedDistrict(""); 
   };
 
   const handleDistrictChange = (event) => {
     setSelectedDistrict(event.target.value);
-    setFormData({ ...formData, district: event.target.value }); // İlçe seçildiğinde formData'yı güncelle
+    setFormData({ ...formData, district: event.target.value });
   };
   useEffect(() => {
     const token = localStorage.getItem("token");

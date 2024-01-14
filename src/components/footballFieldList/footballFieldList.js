@@ -42,13 +42,13 @@ import InfoIcon from "@mui/icons-material/Info";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import image from "./indir.jpg";
-import "moment/locale/tr"; // Türkçe yerelleştirmeyi import edin
-moment.locale("tr"); // Global olarak Türkçe yerelleştirmeyi ayarlayın
+import "moment/locale/tr"; 
+moment.locale("tr"); 
 registerLocale('tr', tr);
 const initialHours = Array.from({ length: 24 }, (_, index) => ({
   label: `${index}:00 - ${index + 1}:00`,
   value: index,
-  isOccupied: false, // Bu özellik daha sonra saatlerin dolu olup olmadığını belirlemek için kullanılabilir
+  isOccupied: false, 
 }));
 
 const TimeSlotButton = ({ hour, index, onSelect, isSelected, isOccupied }) => {
@@ -116,7 +116,7 @@ const [activeHourIndex, setActiveHourIndex] = useState(null);
     const hour = hours[index];
     if (!hour.isOccupied) {
       setSelectedHour(hour.label);
-      setActiveHourIndex(index); // Seçili olan saat diliminin index'ini state'e kaydet
+      setActiveHourIndex(index); 
     } else {
       alert('Bu saat aralığı doludur. Lütfen başka bir saat seçin.');
     }
@@ -150,7 +150,7 @@ const [activeHourIndex, setActiveHourIndex] = useState(null);
     }
   };
   useEffect(() => {
-    // selectedDate değiştiğinde bu fonksiyon çalışır
+
     const fetchOccupiedHours = async () => {
       if (selectedFootballFieldId) {
         try {
@@ -170,7 +170,7 @@ const [activeHourIndex, setActiveHourIndex] = useState(null);
     };
   
     fetchOccupiedHours();
-  }, [selectedDate, selectedFootballFieldId]); // Bu useEffect, selectedDate veya selectedFootballFieldId değiştiğinde çalışır
+  }, [selectedDate, selectedFootballFieldId]); 
   const fetchFootballFields = async () => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -204,7 +204,6 @@ const [activeHourIndex, setActiveHourIndex] = useState(null);
 
       const isOccupied = occupiedHours.some((occupiedHour) => {
         const startDateLocal = convertToLocaleTime(occupiedHour.startDate);
-        // const endDateLocal = convertToLocaleTime(occupiedHour.endDate);
 
         return (
           startDateLocal.getDate() === selectedDate.getDate() &&
@@ -224,7 +223,7 @@ const [activeHourIndex, setActiveHourIndex] = useState(null);
   };
   const handleDateChange = (date) => {
     setSelectedDate(date);
-    setActiveHourIndex(null); // Tarih değiştiğinde seçili saati sıfırlayalım
+    setActiveHourIndex(null); 
     fetchAndMarkOccupiedHours(selectedFootballFieldId, date);
   };
   const renderTimeSlots = () => {
@@ -244,10 +243,10 @@ const [activeHourIndex, setActiveHourIndex] = useState(null);
       </Grid>
     );
   };
-  // Saat Aralığı Seçimi
+
 const handleHourSelection = (index) => {
   const newHours = [...hours];
-  newHours[index].isOccupied = !newHours[index].isOccupied; // Bu örnek sadece dolu/boş durumunu değiştirir
+  newHours[index].isOccupied = !newHours[index].isOccupied; 
   setHours(newHours);
 };
 const renderGuestRentDialog = () => (
@@ -328,16 +327,12 @@ const renderGuestRentDialog = () => (
     </form>
   </Dialog>
 );
-// footballFieldid: selectedFootballFieldId, // Bu ID'yi nasıl elde ettiğinize göre ayarlayın
 const handleGuestRentSubmit = async (e) => {
   e.preventDefault();
-  // Telefon veya email alanlarından en az biri doldurulmuş mu diye kontrol et
   if (!formData.telNo && !formData.email) {
     alert('Telefon numarası veya email adresi alanlarından en az birini doldurmalısınız.');
     return;
   }
-
-  // Seçilen saat aralığını ve tarihi kullanarak UTC'de startDate ve endDate oluşturun
   const [startHour, endHour] = selectedHour.split(' - ').map(h => parseInt(h, 10));
   const startDateUTC = new Date(Date.UTC(
     selectedDate.getFullYear(),
@@ -355,7 +350,6 @@ const handleGuestRentSubmit = async (e) => {
     0,
     0
   ));
-  // API isteği için payload oluşturma
   const payload = {
     startDate: startDateUTC.toISOString(),
     endDate: endDateUTC.toISOString(),
@@ -363,11 +357,9 @@ const handleGuestRentSubmit = async (e) => {
     ...formData
   };
 
-  // Gönderilecek verileri konsolda göster
   console.log("Gönderilecek payload:", payload);
   console.log("Kiralanan saat:", selectedHour, "Tarih:", selectedDate.toLocaleString());
 
-  // API isteği yapma
   try {
     const response = await fetch("http://localhost:4042/rent-football-field/rent-football-field-guest", {
       method: "POST",
@@ -425,13 +417,11 @@ const handleGuestRentSubmit = async (e) => {
   }, []);
 
   const handleEditClick = (fieldId) => {
-    // footballFields dizisinden seçilen sahanın tüm bilgilerini bul
     const fieldToEdit = footballFields.find((field) => field.id === fieldId);
     if (fieldToEdit) {
       setEditingField({ ...fieldToEdit });
       setOpenModal(true);
     } else {
-      // Hata işleme: Seçilen saha bulunamadı
       console.error("Seçilen saha bulunamadı");
     }
   };
@@ -447,7 +437,7 @@ const handleGuestRentSubmit = async (e) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const payload = {
-      id: selectedFootballFieldId, // ID'yi state'den alın (bu, düzenlenen sahanın ID'si olmalıdır)
+      id: selectedFootballFieldId, 
       name: editingField.name,
       telephoneNumber: editingField.telephoneNumber,
       city: editingField.city,
@@ -460,17 +450,16 @@ const handleGuestRentSubmit = async (e) => {
       const response = await fetch(
         "http://localhost:4042/football-field/update-footballfield",
         {
-          method: "PUT", // veya 'POST', API'nizin beklediği yönteme göre
+          method: "PUT", 
           headers: {
             "Content-Type": "application/json",
-            // Gerekirse diğer başlıklar veya yetkilendirme token'ı
+    
           },
           body: JSON.stringify(editingField),
         }
       );
       if (response.ok) {
-        // Başarılı güncelleme durumu
-        fetchFootballFields(); // Veri setini yeniden yükle
+        fetchFootballFields();
       }
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -484,8 +473,7 @@ const handleGuestRentSubmit = async (e) => {
         confirmButtonText: 'Tamam'
       });
       setUpdateTrigger(oldTrigger => oldTrigger + 1);
-      // Başarılı işlem uyarısı
-      setOpenModal(false); // Modalı kapat
+      setOpenModal(false); 
     } catch (error) {
       Swal.fire({
         icon: 'error',
@@ -506,7 +494,6 @@ const handleGuestRentSubmit = async (e) => {
     boxShadow: 24,
     p: 4,
   };
-  // Userid boş ise bu methoddan donen veriler kullanılacak.
   const handleInspectClick = async (fieldId) => {
     setCurrentFieldId(fieldId);
     try {
@@ -528,7 +515,6 @@ const handleGuestRentSubmit = async (e) => {
   };
   const convertUTCtoTurkeyTime = (utcDate) => {
     const date = new Date(utcDate);
-    // Türkiye için UTC+3 saat ekleyelim
     date.setUTCHours(date.getUTCHours() - 3);
     return date;
   };
@@ -554,12 +540,10 @@ const handleGuestRentSubmit = async (e) => {
       <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
         <DialogTitle>Kullanıcı Detayları</DialogTitle>
         <DialogContent>
-          {/* Kullanıcı detaylarını burada gösterebilirsiniz */}
           <Typography>{userDetails?.name}</Typography>
           <Typography>{userDetails?.surname}</Typography>
           <Typography>{userDetails?.telNo}</Typography>
           <Typography>{userDetails?.email}</Typography>
-          {/* Diğer kullanıcı detayları... */}
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose}>Kapat</Button>
@@ -574,14 +558,10 @@ const handleGuestRentSubmit = async (e) => {
   try {
     let userDetailsResponse;
     if (userId) {
-      // Eğer userId varsa, bu ID'ye sahip kullanıcının detaylarını al
       userDetailsResponse = await axios.get(`http://localhost:4041/user/user-details?userid=${userId}`);
     } else {
-      // userId yoksa, olayın ID'sini kullanarak olay detaylarını al
       userDetailsResponse = await axios.get(`http://localhost:4042/rent-football-field/rent-football-field-find-by-id?id=${id}`);
     }
-
-    // Burada API'nin dönüş yapısına göre değişiklik yapmanız gerekebilir.
     setUserDetails({
       name: userDetailsResponse.data.name,
       surname: userDetailsResponse.data.surname,
@@ -594,7 +574,6 @@ const handleGuestRentSubmit = async (e) => {
   }
 };
 
-  // Dialog'u kapatmak için fonksiyon
   const handleUserDetailsClose = () => {
     setUserDetailsOpen(false);
   };
@@ -611,7 +590,7 @@ const handleGuestRentSubmit = async (e) => {
       let e = localizer.format(end, "HH:mm", culture);
       return `${s} - ${e}`;
     },
-    // Diğer formatlar gerekiyorsa buraya eklenebilir...
+
   };
   const messages = {
     agenda: "Ajanda",
@@ -624,16 +603,12 @@ const handleGuestRentSubmit = async (e) => {
     showMore: (total) => `+${total} daha göster`,
   };
   const handleGuestRentClick = (fieldId) => {
-    // Misafir kiralama formunu açma veya başka bir işlem yapma
     console.log("Misafir olarak kiralama işlemi için saha ID:", fieldId);
     setOpenDialog(true);
-    // İşlemler...
   };
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      {/* <Typography variant="h4" gutterBottom sx={{ textAlign: "center" }}>
-      </Typography> */}
       <Grid
         container
         spacing={3}

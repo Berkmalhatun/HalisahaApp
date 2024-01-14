@@ -32,22 +32,22 @@ const RentalHistoryPage = () => {
     fetchRentals();
   }, []);
 
-//   bu method db deb dogru gelen verıyı 3 saat ılerı sekılde ekrana yazdırdıgı ıcın yazıldı .
+
   const formatToLocalTime = (utcDate) => {
     const date = new Date(utcDate);
     return date.toLocaleString('tr-TR', { timeZone: 'UTC' });
   };
   const handleViewDetails = async (footballFieldid) => {
     try {
-      // footballFieldid kullanarak detayları çek
+
       const response = await fetch(`http://localhost:4042/football-field/find-footballfield?id=${footballFieldid}`);
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
       const data = await response.json();
       console.log(data);
-      setFieldDetails(data); // Alınan detayları state'e kaydet
-      setOpenDialog(true);    // Detayları göstermek için modalı aç
+      setFieldDetails(data);
+      setOpenDialog(true);   
     } catch (error) {
       console.error("Football field details fetch error:", error);
     }
@@ -63,20 +63,18 @@ const RentalHistoryPage = () => {
   const currentRentals = rentals.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
   const handleCancel = async (rentalID) => {
-    console.log('Cancelling rental with ID:', rentalID); // ID'yi kontrol etmek için
-  
-    // Query parametresi olarak ID'yi ekleyin
+    console.log('Cancelling rental with ID:', rentalID); 
+
     const endpoint = `http://localhost:4042/rent-football-field/cancel?id=${rentalID}`;
-    const token = localStorage.getItem('token'); // Token'ı localStorage'dan al
+    const token = localStorage.getItem('token'); 
   
     try {
       const response = await fetch(endpoint, {
-        method: 'PUT', // API'nin beklediği method tipi DELETE olabilir, kontrol edin.
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}` // Token'ı Authorization header'ına ekle
+          'Authorization': `Bearer ${token}` 
         },
-        // Body'ye ihtiyaç duymadan sadece URL üzerinden ID'yi gönderiyoruz
       });
   
       if (!response.ok) {
@@ -84,8 +82,6 @@ const RentalHistoryPage = () => {
       } else {
         // İşlem başarılıysa, kullanıcıya bildir ve listeyi güncelle
         console.log('Kiralama başarıyla iptal edildi');
-        // Burada state'i güncelleyerek UI'da değişiklikleri yansıtabilirsiniz...
-        // Örneğin:
         setRentals(prevRentals => prevRentals.filter(rental => rental.id !== rentalID));
       }
     } catch (error) {
