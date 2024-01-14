@@ -1,70 +1,42 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Halisaha Kiralama Sistemi
 
-## Available Scripts
+Java tabanlı bir mikroservis mimarisi geliştirerek futbol sahası kiralama sistemi üzerinde çalıştım. Bu sistem, kullanıcıların futbol sahalarını kolayca kiralamalarını sağlayan kapsamlı bir platformdur. Projenin temelinde, kullanıcıların veri tabanıyla etkileşimini sağlayan CRUD (oluşturma, güncelleme, silme ve okuma) işlemlerini başarıyla gerçekleştirdim.
 
-In the project directory, you can run:
+Sistemde, kullanıcılara özgü rol atamaları yaptım ve giriş sonrası token bazlı rol doğrulaması ile güvenlik sağladım. Bu, kullanıcıların yetkilerini etkin bir şekilde yönetmemizi sağladı. Özellikle, kullanıcılara bölgesel olarak uygun futbol sahalarını listeleme özelliği ekledim, bu sayede kullanıcılar ihtiyaçlarına en uygun sahayı kolayca bulabildiler.
 
-### `npm start`
+Projede ayrıca, 'Halısaha Yöneticisi' rolüne sahip kullanıcılar için özel işlevler geliştirdim. Bu kullanıcılar, kendi sahalarını sisteme ekleyebilir, düzenleyebilir
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+ve kiralama işlemlerini yönetebilirler. Ayrıca, kiralanmış sahaları kullanan kişilerin bilgilerini görüntüleme yetkilerine sahiptirler. Bu özellik, halı saha yöneticilerine sahalarını daha etkin bir şekilde yönetme imkanı tanıdı.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Sistemin bir diğer önemli özelliği ise, misafir kullanıcı işlevselliğidir. Sistem dışından yapılan kiralama işlemleri için, misafir kullanıcılar olarak sisteme ekleme yapılabilir. Bu sayede, platform dışından gerçekleşen işlemler de kayıt altına alınarak, işlemlerin şeffaflığı ve izlenebilirliği artırıldı.
 
-### `npm test`
+Projenin teknoloji yelpazesi oldukça geniştir. Java, Spring Boot ve Spring Security başta olmak üzere, Lombok, Mapstruct, OpenAPI, Swagger UI, OpenFeign, RabbitMQ, MongoDB, JWT ve React gibi teknolojileri kullanarak, güçlü ve esnek bir sistem inşa ettim. Bu proje, modern web geliştirme pratiklerine olan hakimiyetimi ve çeşitli araçları entegre etme yeteneğimi göstermektedir.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+ ## Proje Nasıl Klonlanır?
 
-### `npm run build`
+1. Bilgisayarınızda Git'in yüklü olması gerekmektedir.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+2. Komut istemcisini açın.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+3. Projeyi klonlamak istediğiniz dizine gidin, aşağıdaki komutu istemcinize yazın.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `npm run eject`
+```bash 
+git clone https://github.com/Berkmalhatun/HalisahaApp
+```
+4. Kullanmış olduğunuz IDE'yi açın  
+5. Klonlamış olduğunuz dosyayı IDE üzerinden açın.
+6. Terminale girip aşağıdaki komut ile `package.json` dosyasında listelenen tüm bağımlılıklar yüklenir.
+```bash 
+npm install
+```
+7. Proje yerel geliştirme sunucusunda aşağıdaki kod ile açılır.
+```bash 
+npm start
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Video
+[Tanıtım](https://youtu.be/JlZ9VuWOYAw)
+## Son
+İnceleyip zaman ayırdığınız için teşekkür ederim.
