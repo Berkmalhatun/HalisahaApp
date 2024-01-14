@@ -93,7 +93,7 @@ const RentalHistoryPage = () => {
     }
   };
   return (
-    <>
+    <div className='start-card2'>
       {currentRentals.map((rental, index) => {
         const rentalStartDate = new Date(rental.startDate);
         const now = new Date();
@@ -105,7 +105,7 @@ const RentalHistoryPage = () => {
               <div className="card-text2">Bitiş Tarihi: {formatToLocalTime(rental.endDate)}</div>
               <Button 
                 variant="contained" 
-                color="primary" 
+                color="secondary" 
                 className="select-button2"
                 onClick={() => handleViewDetails(rental.footballFieldid)}
               >
@@ -127,23 +127,41 @@ const RentalHistoryPage = () => {
         count={Math.ceil(rentals.length / ITEMS_PER_PAGE)}
         page={currentPage}
         onChange={handlePageChange}
-        color="primary"
+        color="secondary"
       />
-      <Dialog open={openDialog} onClose={handleCloseDialog}>
-        <DialogTitle>Halı Saha Detayları</DialogTitle>
-        <DialogContent>
-          <Typography variant="h6">İsim: {fieldDetails?.name}</Typography>
-          <Typography>Telefon: {fieldDetails?.telephoneNumber}</Typography>
-          <Typography>Şehir: {fieldDetails?.city}</Typography>
-          <Typography>İlçe: {fieldDetails?.district}</Typography>
-          <Typography>Adres: {fieldDetails?.address}</Typography>
-          <Typography>Fiyat: {fieldDetails?.price} TL</Typography>
+      <Dialog open={openDialog} onClose={handleCloseDialog} >
+  <DialogTitle className="dialog-title">Halı Saha Detayları</DialogTitle>
+  <DialogContent className="dialog-content">
+    <Typography className="detail-item">
+      <span className="detail-label">İsim:</span>
+      <span className="detail-value">{fieldDetails?.name}</span>
+    </Typography>
+    <Typography className="detail-item">
+      <span className="detail-label">Telefon:</span>
+      <span className="detail-value">{fieldDetails?.telephoneNumber}</span>
+    </Typography>
+    <Typography className="detail-item">
+      <span className="detail-label">Şehir:</span>
+      <span className="detail-value">{fieldDetails?.city}</span>
+    </Typography>
+    <Typography className="detail-item">
+      <span className="detail-label">İlçe:</span>
+      <span className="detail-value">{fieldDetails?.district}</span>
+    </Typography>
+    <Typography className="detail-item">
+      <span className="detail-label">Adres:</span>
+      <span className="detail-value">{fieldDetails?.address}</span>
+    </Typography>
+    <Typography className="detail-item">
+      <span className="detail-label">Fiyat:</span>
+      <span className="detail-value">{fieldDetails?.price}</span>
+    </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDialog}>Kapat</Button>
+          <Button onClick={handleCloseDialog} variant="contained" color="primary" className="close-button">Kapat</Button>
         </DialogActions>
       </Dialog>
-    </>
+    </div>
   );
 };
 

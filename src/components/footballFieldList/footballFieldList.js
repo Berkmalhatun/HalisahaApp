@@ -20,6 +20,8 @@ import Pagination from "@mui/material/Pagination";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import Swal from 'sweetalert2';
+import "./footballFieldList.css";
 import {
   Container,
   Grid,
@@ -89,6 +91,7 @@ const [openDialog, setOpenDialog] = useState(false);
 const [activeHourIndex, setActiveHourIndex] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const fieldsPerPage = 6; // Her sayfada gösterilecek saha sayısı
+  const [updateTrigger, setUpdateTrigger] = useState(0);
 
   const indexOfLastField = currentPage * fieldsPerPage;
   const indexOfFirstField = indexOfLastField - fieldsPerPage;
@@ -168,7 +171,27 @@ const [activeHourIndex, setActiveHourIndex] = useState(null);
   
     fetchOccupiedHours();
   }, [selectedDate, selectedFootballFieldId]); // Bu useEffect, selectedDate veya selectedFootballFieldId değiştiğinde çalışır
-  
+  const fetchFootballFields = async () => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      const decoded = jwtDecode(token);
+      try {
+        const response = await axios.get(
+          `http://localhost:4042/football-field/get-footballfield?userid=${decoded.id}`,
+          {
+            params: { userid: decoded.userid },
+          }
+        );
+        setFootballFields(response.data);
+      } catch (error) {
+        console.error("Halı saha bilgileri alınırken bir hata oluştu", error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchFootballFields();
+  }, []);
   
   const convertToLocaleTime = (dateString) => {
     const dateUTC = new Date(dateString);
@@ -351,20 +374,31 @@ const handleGuestRentSubmit = async (e) => {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(payload), 
     });
-
+    Swal.fire({
+      title: 'Başarılı',
+      text: 'Kiralama işlemi başarıyla tamamlandı.',
+      icon: 'success',
+      confirmButtonText: 'Tamam',
+      customClass: {
+        container: 'swal-container'
+      }
+    });
     if (response.ok) {
       await fetchAndMarkOccupiedHours(selectedFootballFieldId, selectedDate);
       const responseData = await response.json();
       console.log("Kiralama başarılı:", responseData);
-      alert("Kiralama başarılı!");
     } else {
       throw new Error(`API hatası: ${response.status}`);
     }
   } catch (error) {
-    console.error("Kiralama işlemi sırasında hata oluştu:", error);
-    alert("Kiralama sırasında bir hata oluştu.");
+    Swal.fire({
+      icon: 'error',
+      title: 'Kayıt işlemi başarısız',
+      text: 'Bir sorun oluştu, lütfen tekrar deneyiniz.',
+    });
+    console.error("Kayıt işlemi sırasında bir hata oluştu", error);
   }
 };
 
@@ -412,6 +446,16 @@ const handleGuestRentSubmit = async (e) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const payload = {
+      id: selectedFootballFieldId, // ID'yi state'den alın (bu, düzenlenen sahanın ID'si olmalıdır)
+      name: editingField.name,
+      telephoneNumber: editingField.telephoneNumber,
+      city: editingField.city,
+      district: editingField.district,
+      address: editingField.address,
+      price: editingField.price,
+      email: editingField.email
+    };
     try {
       const response = await fetch(
         "http://localhost:4042/football-field/update-footballfield",
@@ -424,18 +468,31 @@ const handleGuestRentSubmit = async (e) => {
           body: JSON.stringify(editingField),
         }
       );
-
+      if (response.ok) {
+        // Başarılı güncelleme durumu
+        fetchFootballFields(); // Veri setini yeniden yükle
+      }
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const data = await response.json();
-      console.log("Güncelleme başarılı:", data);
+      const updatedData  = await response.json();
+      Swal.fire({
+        icon: 'success',
+        title: 'Başarılı!',
+        text: updatedData.message || 'Bilgileriniz başarıyla güncellendi.',
+        confirmButtonText: 'Tamam'
+      });
+      setUpdateTrigger(oldTrigger => oldTrigger + 1);
       // Başarılı işlem uyarısı
       setOpenModal(false); // Modalı kapat
     } catch (error) {
-      console.error("Güncelleme sırasında hata:", error);
-      // Başarısız işlem uyarısı
+      Swal.fire({
+        icon: 'error',
+        title: 'Hata',
+        text: 'Güncelleme işlemi sırasında bir hata oluştu: ' + error.message,
+        confirmButtonText: 'Tamam'
+      });
     }
   };
   const modalStyle = {
@@ -482,6 +539,7 @@ const handleGuestRentSubmit = async (e) => {
     end: convertUTCtoTurkeyTime(rentTime.endDate),
     allDay: false,
     userId: rentTime.userid,
+    id:rentTime.id
   }));
   const CustomAgendaEvent = ({ event }) => (
     <div>
@@ -511,25 +569,30 @@ const handleGuestRentSubmit = async (e) => {
   };
   const handleEventClick = async (event) => {
     const userId = event.userId;
+    const id = event.id
+
+  try {
+    let userDetailsResponse;
     if (userId) {
-      try {
-        const response = await axios.get(
-          `http://localhost:4041/user/user-details?userid=${userId}`
-        );
-        setUserDetails({
-          name: response.data.name,
-          surname: response.data.surname,
-          email: response.data.email,
-          telNo: response.data.telNo,
-        }); // Dönen tüm kullanıcı detaylarını state'e kaydedin
-        setUserDetailsOpen(true); // Dialog'u açın
-      } catch (error) {
-        console.error("Kullanıcı detayları alınamadı:", error);
-      }
+      // Eğer userId varsa, bu ID'ye sahip kullanıcının detaylarını al
+      userDetailsResponse = await axios.get(`http://localhost:4041/user/user-details?userid=${userId}`);
     } else {
-      console.error("Event objesinde userId tanımlı değil");
+      // userId yoksa, olayın ID'sini kullanarak olay detaylarını al
+      userDetailsResponse = await axios.get(`http://localhost:4042/rent-football-field/rent-football-field-find-by-id?id=${id}`);
     }
-  };
+
+    // Burada API'nin dönüş yapısına göre değişiklik yapmanız gerekebilir.
+    setUserDetails({
+      name: userDetailsResponse.data.name,
+      surname: userDetailsResponse.data.surname,
+      email: userDetailsResponse.data.email,
+      telNo: userDetailsResponse.data.telNo,
+    });
+    setUserDetailsOpen(true); // Dialog'u aç
+  } catch (error) {
+    console.error("Detaylar alınırken bir hata oluştu:", error);
+  }
+};
 
   // Dialog'u kapatmak için fonksiyon
   const handleUserDetailsClose = () => {
@@ -569,9 +632,8 @@ const handleGuestRentSubmit = async (e) => {
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      <Typography variant="h4" gutterBottom sx={{ textAlign: "center" }}>
-        Halı Sahalarım
-      </Typography>
+      {/* <Typography variant="h4" gutterBottom sx={{ textAlign: "center" }}>
+      </Typography> */}
       <Grid
         container
         spacing={3}
@@ -620,7 +682,13 @@ const handleGuestRentSubmit = async (e) => {
           </Grid>
         ))}
          {renderGuestRentDialog()}
-      </Grid>
+         {currentFields.length % 3 !== 0 && [...Array(3 - (currentFields.length % 3))].map((e, i) => (
+<Grid item xs={12} sm={6} md={4} key={i}>
+<Card sx={{ minWidth: 300, mb: 4, boxShadow: 3, minHeight: 200 , visibility: 'hidden'}}>
+</Card>
+</Grid>
+))}
+</Grid>
       <Box sx={{ textAlign: 'left', mt: 2 }}>
   <Pagination
     count={Math.ceil(footballFields.length / fieldsPerPage)}
@@ -631,7 +699,8 @@ const handleGuestRentSubmit = async (e) => {
 </Box>
       <Modal open={openInspectModal} onClose={() => setOpenInspectModal(false)}>
         <Box sx={modalStyle}>
-          <Typography variant="h6">{`Saha ID: ${currentFieldId} - Doluluk Bilgileri`}</Typography>
+          {/* Saha ID: ${currentFieldId} - */}
+          <Typography variant="h6">{`Doluluk Bilgileri`}</Typography>
           <Calendar
             localizer={localizer}
             events={rentEvents}

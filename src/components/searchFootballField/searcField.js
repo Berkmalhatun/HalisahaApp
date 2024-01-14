@@ -25,8 +25,9 @@ import SearchIcon from "@mui/icons-material/Search";
 import { jwtDecode } from "jwt-decode";
 //
 import "react-datepicker/dist/react-datepicker.css";
-import DatePicker from "react-datepicker";
-
+import DatePicker, { registerLocale } from "react-datepicker";
+import tr from 'date-fns/locale/tr';
+registerLocale('tr', tr);
 // const hours = Array.from({ length: 24 }, (_, index) => ({
 //   label: `${index}:00 - ${index + 1}:00`,
 //   value: index,
@@ -514,7 +515,7 @@ const SearchPage = () => {
           <div style={{ marginBottom: "20px" }}>
             {" "}
             {/* Tarih seçimine alttan boşluk ekler */}
-            <DatePicker selected={selectedDate} onChange={handleDateChange} />
+            <DatePicker selected={selectedDate} onChange={handleDateChange} locale="tr" />
           </div>
           {renderTimeSlots()}
         </DialogContent>
@@ -561,7 +562,7 @@ const SearchPage = () => {
           severity="error"
           sx={{ width: "100%" }}
         >
-          Hata! Kiralama işlemi başarısız oldu.
+          Halısaha bulunamadı
         </Alert>
       </Snackbar>
     </div>
