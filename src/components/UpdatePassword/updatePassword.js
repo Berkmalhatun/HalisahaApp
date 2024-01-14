@@ -20,7 +20,6 @@ const ChangePasswordPage = () => {
     e.preventDefault();
     const { password, newPassword, reNewPassword } = passwords;
 
-    // Check if new passwords match
     if (newPassword !== reNewPassword) {
       Swal.fire({
         icon: 'error',
@@ -29,11 +28,8 @@ const ChangePasswordPage = () => {
       });
       return;
     }
-
-    // Clear error message
     setError("");
 
-    // Get user ID from token
     const token = localStorage.getItem("token");
     const decoded = jwtDecode(token);
 

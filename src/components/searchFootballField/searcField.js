@@ -36,7 +36,7 @@ registerLocale('tr', tr);
 const initialHours = Array.from({ length: 24 }, (_, index) => ({
   label: `${index}:00 - ${index + 1}:00`,
   value: index,
-  isOccupied: false, // Bu özellik daha sonra saatlerin dolu olup olmadığını belirlemek için kullanılabilir
+  isOccupied: false,
 }));
 //
 const RowCard = ({ row, onSelect }) => {
@@ -83,9 +83,9 @@ const SearchPage = () => {
           <div
             style={{
               whiteSpace: "normal",
-              lineHeight: "normal", // Satır yüksekliğini ayarlayarak metnin okunaklılığını artırabilirsiniz
-              maxHeight: "100%", // Hücrenin maksimum yüksekliği, gerekirse bu değeri artırabilirsiniz
-              overflow: "auto", // Gerekirse içeriğin kaydırılabilir olmasını sağlar
+              lineHeight: "normal", 
+              maxHeight: "100%", 
+              overflow: "auto", 
             }}
           >
             {params.value}
@@ -111,9 +111,9 @@ const SearchPage = () => {
           <div
             style={{
               whiteSpace: "normal",
-              lineHeight: "normal", // Satır yüksekliğini ayarlayarak metnin okunaklılığını artırabilirsiniz
-              maxHeight: "100%", // Hücrenin maksimum yüksekliği, gerekirse bu değeri artırabilirsiniz
-              overflow: "auto", // Gerekirse içeriğin kaydırılabilir olmasını sağlar
+              lineHeight: "normal", 
+              maxHeight: "100%", 
+              overflow: "auto", 
             }}
           >
             {params.value}
@@ -409,8 +409,6 @@ const SearchPage = () => {
         setTimeout(() => {
           setOpenSnackbar(false);
         }, 6000); // 6 saniye sonra snackbar'ı kapat
-
-        // ... Diğer başarı durumunda yapılacak işlemler
       } else {
         // İşlem başarısız olduğunda
         throw new Error("Something went wrong with the rent request.");
@@ -419,8 +417,6 @@ const SearchPage = () => {
       // Hata oluştuğunda
       console.error("Rent failed", error);
       setShowErrorSnackbar(true);
-
-      // İsteğe bağlı: Hata mesajını göstermek için bir zaman aşımı ayarlayabilirsiniz
       setTimeout(() => {
         setShowErrorSnackbar(false);
       }, 6000); // 6 saniye sonra hata snackbar'ını kapat

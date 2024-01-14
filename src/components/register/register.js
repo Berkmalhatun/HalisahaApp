@@ -2,10 +2,9 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import Swal from 'sweetalert2';
-import "./register.css"; // Bu dosyada stilinizi tanımlayın
+import "./register.css"; 
 
 function RegisterPage() {
-  // State hooks to store form data
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
@@ -16,7 +15,6 @@ function RegisterPage() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    // Burada form verileriyle ne yapmak istediğinize dair işlemleri yapabilirsiniz.
     console.log(email, name, surname, telNo, password, rePassword);
     if (password !== rePassword) {
       Swal.fire({

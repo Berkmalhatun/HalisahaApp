@@ -10,9 +10,9 @@
 
 .formControl {
   margin: 8px;
-  background-color: rgba(255, 255, 255, 0.9); /* Opaklık eklendi */
-  border: 1px solid #ccc; /* Belirgin bir çerçeve eklendi */
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2); /* Hafif bir gölge eklendi */
+  background-color: rgba(255, 255, 255, 0.9); 
+  border: 1px solid #ccc; 
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2); 
 }
 
 /* Input label stilini güncelleme */

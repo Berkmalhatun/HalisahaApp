@@ -32,21 +32,17 @@ const Sidebar = () => {
         <p>{role}</p>
       </div>
       <nav className="sidebar-nav">
-        {/* Rol kontrolü */}
         {role === 'EXECUTIVE' ? (
-          // Halı saha yöneticisi için menü öğeleri
           <>
             <Link to="/home/fields/add" className="sidebar-nav-item">Halı Saha Ekle</Link>
             <Link to="/home/fields/manage" className="sidebar-nav-item">Halı Sahalarım</Link>
           </>
         ) : (
-          // Kullanıcı için menü öğeleri
           <>
             <Link to="/home/search" className="sidebar-nav-item">Saha Ara</Link>
             <Link to="/home/history" className="sidebar-nav-item">Geçmiş</Link>
           </>
         )}
-        {/* Ayarlar ve Çıkış Yap menüsü */}
         <div className="sidebar-nav-item" onClick={toggleSettings}>
           AYARLAR {settingsOpen ? <ExpandLessIcon className="expand-icon" /> : <ExpandMoreIcon className="expand-icon" />}
         </div>
