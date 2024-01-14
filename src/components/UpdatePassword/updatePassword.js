@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { TextField, Button, Container, Typography, Alert,Paper } from "@mui/material";
 import { jwtDecode } from "jwt-decode";
+import Swal from 'sweetalert2';
 
 const ChangePasswordPage = () => {
   const [passwords, setPasswords] = useState({
@@ -21,7 +22,11 @@ const ChangePasswordPage = () => {
 
     // Check if new passwords match
     if (newPassword !== reNewPassword) {
-      setError("Yeni şifreler uyuşmuyor.");
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Yeni şifreler uyuşmuyor.',
+      });
       return;
     }
 
@@ -51,11 +56,17 @@ const ChangePasswordPage = () => {
       );
       const data = await response.json();
       if (!response.ok) throw new Error(data.message);
-      // Handle success
-      alert("Şifreniz başarıyla güncellendi.");
+      Swal.fire({
+        icon: 'success',
+        title: 'Başarılı!',
+        text: 'Şifreniz başarıyla güncellendi.',
+      });
     } catch (error) {
-      // Handle errors
-      setError(error.message);
+      Swal.fire({
+        icon: 'error',
+        title: 'Hata',
+        text: error.message,
+      });
     }
   };
 

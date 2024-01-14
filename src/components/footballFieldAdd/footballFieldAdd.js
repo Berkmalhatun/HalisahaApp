@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
+import Swal from 'sweetalert2';
 import {
   TextField,
   Button,
@@ -104,11 +105,19 @@ const FootballFieldForm = () => {
       }
 
       const data = await response.json();
-      console.log(data);
-      alert("Halı saha başarıyla eklendi!");
+      Swal.fire({
+        icon: 'success',
+        title: 'Başarılı!',
+        text: 'Halı saha başarıyla eklendi!',
+        confirmButtonText: 'Harika!'
+      });
     } catch (error) {
-      console.error("Halı saha eklerken bir hata oluştu", error);
-      alert("Halı saha eklenirken bir hata oluştu.");
+      Swal.fire({
+        icon: 'error',
+        title: 'Hata',
+        text: 'Halı saha eklenirken bir hata oluştu.',
+        confirmButtonText: 'Tamam'
+      });
     }
   };
 

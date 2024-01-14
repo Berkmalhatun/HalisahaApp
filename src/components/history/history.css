@@ -1,8 +1,17 @@
+.start-card2{
+  padding-top: 1rem;
+}
 .card2 {
-    background-color: #a1f3c9; /* Koyu arka plan rengi için */
-    color: white; /* Yazı rengi */
-    margin-bottom: 1rem; /* Kartların altındaki boşluk */
-    border-radius: 4px; /* Kenarları yuvarlat */
+  background-color: #ffffff; /* Daha açık ve temiz bir arka plan rengi */
+  color: #333; /* Daha koyu ve okunaklı bir yazı rengi */
+  margin-bottom: 1rem; /* Kartların altındaki boşluk */
+  border-radius: 8px; /* Daha yuvarlak köşeler */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Hafif bir gölge efekti */
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* Animasyon etkisi */
+}
+.card2:hover {
+  transform: translateY(-5px); 
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); 
   }
   
   .card-content2 {
@@ -11,11 +20,13 @@
   
   .card-title2 {
     font-size: 1.25rem; /* Başlık için yazı boyutu */
-    margin-bottom: 0.5rem; /* Başlık altındaki boşluk */
+    margin-bottom: 0.75rem; /* Başlık altındaki boşluk */
+    font-weight: 600; /* Başlık için font kalınlığı */
   }
   
   .card-text2 {
-    margin-bottom: 0.25rem; /* Metin altındaki boşluk */
+    margin-bottom: 1rem; /* Metin altındaki boşluk */
+    line-height: 1.6; /* Metin satır yüksekliği */
   }
   /* */
   .select-button2 { 
@@ -30,6 +41,63 @@
      text-transform: uppercase; /*Buton metnini büyük harfe çevir  */ 
    }
   
-  .select-button2:hover {
-    background-color: #e64a19; /* Buton üzerine gelindiğinde arka plan rengi */
-  }
+   .select-button2:hover {
+    background-color: #43a047; /* Buton üzerine gelindiğinde arka plan rengi daha koyu bir yeşil tonu */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Buton üzerine gelindiğinde daha belirgin gölge */
+    }
+    .delete-button {
+      position: absolute; /* Pozisyonu mutlak yaparak, kartın içinde serbestçe hareket ettirebiliriz */
+      top: 10px; /* Üstten boşluk */
+      right: 10px; /* Sağdan boşluk */
+      color: #f44336; /* Silme ikonu için kırmızı tonu */
+      }
+
+      .dialog-content {
+        background-color: #ffffff; /* Saf beyaz arka plan rengi */
+        border-radius: 8px; /* Kenarları yuvarlat */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Hafif bir gölge */
+        padding: 20px; /* İçerik için boşluk */
+        margin: 20px; /* Etrafında boşluk sağlar */
+      }
+      
+      
+      /* Detaylar diyalog başlığı için stil */
+      .dialog-title {
+        font-size: 1.5rem; /* Başlık boyutu */
+        font-weight: 600; /* Başlık kalınlığı */
+        color: #333; /* Koyu gri renk */
+        margin-bottom: 15px; /* Altındaki boşluk */
+      }
+      
+      .detail-item {
+        margin-bottom: 10px; 
+        }
+        
+  
+        .detail-label {
+        color: #555; 
+        font-weight: bold; 
+        }
+        
+        
+        .detail-value {
+        color: #333; 
+        margin-left: 5px;
+        }
+        
+      
+        .close-button {
+        background-color: #f44336;
+        color: white; 
+        padding: 10px 20px;
+        border: none; 
+        border-radius: 4px; 
+        cursor: pointer; 
+        font-weight: bold;
+        text-transform: uppercase; 
+        transition: background-color 0.3s; 
+        }
+        
+        .close-button:hover {
+        background-color: #d32f2f; /* Üzerine gelindiğinde renk değişikliği */
+        }

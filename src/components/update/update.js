@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button, TextField, Container, Paper, Typography } from '@mui/material';
 import { jwtDecode } from "jwt-decode";
-
+import Swal from 'sweetalert2';
 const UpdateUserPage = () => {
   const [userData, setUserData] = useState({
     id: '',
@@ -66,9 +66,20 @@ const UpdateUserPage = () => {
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || 'Güncelleme işlemi başarısız.');
-      alert(data.message);
+      Swal.fire({
+        icon: 'success',
+        title: 'Başarılı!',
+        text: data.message || 'Bilgileriniz başarıyla güncellendi.',
+        confirmButtonText: 'Tamam'
+      });
     } catch (error) {
-      alert('Hata: ' + error.message);
+      // Hata popup
+      Swal.fire({
+        icon: 'error',
+        title: 'Hata',
+        text: 'Güncelleme işlemi sırasında bir hata oluştu: ' + error.message,
+        confirmButtonText: 'Tamam'
+      });
     }
   };
 

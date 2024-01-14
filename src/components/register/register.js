@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import Swal from 'sweetalert2';
 import "./register.css"; // Bu dosyada stilinizi tanımlayın
 
 function RegisterPage() {
@@ -11,14 +12,18 @@ function RegisterPage() {
   const [telNo, settelNo] = useState("");
   const [password, setPassword] = useState("");
   const [rePassword, setrePassword] = useState("");
-  const [role, setRole] = useState("");
+  const [role, setRole] = useState("USER");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     // Burada form verileriyle ne yapmak istediğinize dair işlemleri yapabilirsiniz.
     console.log(email, name, surname, telNo, password, rePassword);
     if (password !== rePassword) {
-      alert("Şifreler uyuşmuyor.");
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Şifreler uyuşmuyor!',
+      });
       return;
     }
 
@@ -37,10 +42,18 @@ function RegisterPage() {
         userData
       );
       console.log(response.data);
-      // Başarılı bir kayıt sonrası yapılacak işlemler
-      // Örneğin kullanıcıyı giriş sayfasına yönlendirme vs.
+      Swal.fire({
+        icon: 'success',
+        title: 'Başarılı!',
+        text: 'Kaydınız başarıyla tamamlandı!',
+        confirmButtonText: 'Tamam'
+      });
     } catch (error) {
-      // Hata durumunda yapılacak işlemler
+      Swal.fire({
+        icon: 'error',
+        title: 'Kayıt işlemi başarısız',
+        text: 'Bir sorun oluştu, lütfen tekrar deneyiniz.',
+      });
       console.error("Kayıt işlemi sırasında bir hata oluştu", error);
     }
   };
@@ -106,7 +119,7 @@ function RegisterPage() {
               type="tel"
               value={telNo}
               onChange={(e) => settelNo(e.target.value)}
-              placeholder="05XXXXXXXXX"
+              placeholder="5XXXXXXXXX"
             />
           </div>
       
