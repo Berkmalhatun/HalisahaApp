@@ -36,7 +36,5 @@ npm install
 npm start
 ```
 
-## Video
-[Tanıtım](https://youtu.be/JlZ9VuWOYAw)
 ## Son
 İnceleyip zaman ayırdığınız için teşekkür ederim.
